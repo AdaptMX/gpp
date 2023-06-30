@@ -35,7 +35,7 @@ defmodule GppTest do
     ]
 
     for {input, expected} <- examples do
-      assert expected == Gpp.parse(input)
+      assert {:ok, expected} == Gpp.parse(input)
     end
   end
 end

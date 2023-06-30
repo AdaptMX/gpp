@@ -39,26 +39,33 @@ defmodule Gpp do
 
   def parse(input) do
     [header | sections] = String.split(input, "~")
+    header_bits = decode_header!(header)
 
-    header
+    with {:ok, gpp, section_range} <- parse_header(header_bits) do
+      parse_sections(gpp, section_range, sections)
+    end
+  end
+
+  defp decode_header!(string) do
+    string
     |> Base.url_decode64!(padding: false)
     |> then(fn b ->
       for <<x::size(1) <- b>>, do: x
     end)
-    |> parse_sections(sections)
   end
 
-  defp parse_sections(bits, sections) do
+  defp parse_header(bits) do
     with {:ok, type, version_and_section_range} <- type(bits),
          {:ok, version, rest} <- version(version_and_section_range),
-         {:ok, section_range} <- section_range(rest),
-         {:ok, section_ids, sections} <- sections(section_range, sections) do
-      %__MODULE__{
-        type: type,
-        version: version,
-        section_ids: section_ids,
-        sections: sections
-      }
+         {:ok, section_range} <- section_range(rest) do
+      {:ok, %__MODULE__{type: type, version: version}, section_range}
+    end
+  end
+
+  defp parse_sections(gpp, section_range, sections) do
+    with {:ok, section_ids, sections} <-
+           sections(section_range, sections) do
+      {:ok, %{gpp | section_ids: section_ids, sections: sections}}
     end
   end
 
@@ -107,7 +114,6 @@ defmodule Gpp do
       acc = %{acc | max: max(entry, acc.max), range: [id_range | acc.range]}
       decode_fibonacci_range(count - 1, rest, acc)
     else
-      # https://github.com/prebid/go-gpp/blob/main/util/fibonacci.go#L79
       {offset, rest} = decode_fibonacci_word(input)
       {second_offset, rest} = decode_fibonacci_word(rest)
       start_id = acc.max + offset
@@ -139,9 +145,7 @@ defmodule Gpp do
       end)
 
     sections =
-      input
-      |> Enum.zip(section_ids)
-      |> Enum.map(fn {value, id} -> %Section{id: id, value: value} end)
+      Enum.zip_with(input, section_ids, fn value, id -> %Section{id: id, value: value} end)
 
     {:ok, section_ids, sections}
   end
