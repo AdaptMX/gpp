@@ -5,9 +5,9 @@ defmodule Gpp do
   [Spec](https://github.com/InteractiveAdvertisingBureau/Global-Privacy-Platform)
   [Golang Implementation](https://github.com/prebid/go-gpp)
   """
-  alias Gpp.{SectionRange, IdRange, FibonacciDecoder}
+  alias Gpp.{Section, SectionRange, IdRange, FibonacciDecoder}
 
-  defstruct [:type, :version, section_range: 0, sections: []]
+  defstruct type: 3, version: 1, section_ids: [], sections: []
 
   defmodule InvalidType do
     defexception [:message]
@@ -33,19 +33,15 @@ defmodule Gpp do
     12 => "uspct"
   }
 
-  def decode(input) do
+  for {id, name} <- @sections do
+    def section_name(unquote(id)), do: unquote(name)
+  end
+
+  def parse(input) do
     [header | sections] = String.split(input, "~")
 
-    # TODO: This padding and then slicing logic is necessary for base64 decoding,
-    # but there should be a way around this...
-    length = byte_size(header)
-    required_length = length + (6 - rem(length, 6))
-    padded = String.pad_trailing(header, required_length, "0")
-    decoded_length = decoded_length(input)
-
-    padded
+    header
     |> Base.url_decode64!(padding: false)
-    |> String.slice(0..(decoded_length - 1))
     |> then(fn b ->
       for <<x::size(1) <- b>>, do: x
     end)
@@ -56,18 +52,15 @@ defmodule Gpp do
     with {:ok, type, version_and_section_range} <- type(bits),
          {:ok, version, rest} <- version(version_and_section_range),
          {:ok, section_range} <- section_range(rest),
-         {:ok, sections} <- sections(section_range, sections) do
+         {:ok, section_ids, sections} <- sections(section_range, sections) do
       %__MODULE__{
         type: type,
         version: version,
-        section_range: section_range,
+        section_ids: section_ids,
         sections: sections
       }
     end
   end
-
-  # https://cs.opensource.google/go/go/+/refs/heads/master:src/encoding/base64/base64.go;l=623;drc=79d4defa75a26dd975c6ba3ac938e0e414dfd3e9?q=RawURLEncoding&ss=go%2Fgo:src%2Fencoding%2Fbase64%2F
-  defp decoded_length(binary), do: (byte_size(binary) * 6) |> div(4)
 
   defp type([a, b, c, d, e, f | rest]) do
     case decode_int6([a, b, c, d, e, f]) do
@@ -98,10 +91,12 @@ defmodule Gpp do
     decode_fibonacci_range(section_count, rest)
   end
 
-  defp decode_fibonacci_range(count, input, acc \\ %SectionRange{})
+  defp decode_fibonacci_range(count, input) do
+    decode_fibonacci_range(count, input, %SectionRange{size: count})
+  end
 
-  defp decode_fibonacci_range(0, rest, acc) do
-    {:ok, Enum.reverse(acc)}
+  defp decode_fibonacci_range(0, _rest, %{range: range} = acc) do
+    {:ok, %{acc | range: Enum.reverse(range)}}
   end
 
   defp decode_fibonacci_range(count, [next_bit | input], acc) do
@@ -114,9 +109,11 @@ defmodule Gpp do
     else
       # https://github.com/prebid/go-gpp/blob/main/util/fibonacci.go#L79
       {offset, rest} = decode_fibonacci_word(input)
-      entry = acc.max + offset
-      id_range = %IdRange{start_id: entry, end_id: entry}
-      acc = %{acc | max: max(entry, acc.max), range: [id_range | acc.range]}
+      {second_offset, rest} = decode_fibonacci_word(rest)
+      start_id = acc.max + offset
+      end_id = start_id + second_offset
+      id_range = %IdRange{start_id: start_id, end_id: end_id}
+      acc = %{acc | max: max(end_id, acc.max), range: [id_range | acc.range]}
       decode_fibonacci_range(count - 1, rest, acc)
     end
   end
@@ -135,15 +132,18 @@ defmodule Gpp do
 
   defp decode_fibonacci_word([next | rest], acc), do: decode_fibonacci_word(rest, [next | acc])
 
-  defp sections(section_count, input) do
-    acc = input
-    # {_, acc} =
-    #   Enum.reduce(1..section_count, {input, []}, fn _, {input, acc} ->
-    #     IO.inspect(input)
-    #     {input, acc}
-    #   end)
+  defp sections(section_range, input) do
+    section_ids =
+      Enum.flat_map(section_range.range, fn %{start_id: start_id, end_id: end_id} ->
+        for i <- start_id..end_id, do: i
+      end)
 
-    {:ok, acc}
+    sections =
+      input
+      |> Enum.zip(section_ids)
+      |> Enum.map(fn {value, id} -> %Section{id: id, value: value} end)
+
+    {:ok, section_ids, sections}
   end
 
   def decode_int6([a, b, c, d, e, f]) do

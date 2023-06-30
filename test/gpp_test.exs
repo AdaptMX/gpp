@@ -2,25 +2,40 @@ defmodule GppTest do
   use ExUnit.Case
   doctest Gpp
 
-  test "decode headers" do
-    examples = [{"DBABM", 1}, {"DBACNY", 2}, {"DBABjw", 1}]
-
-    for {input, section_range} <- examples do
-      assert %Gpp{type: 3, version: 1, section_range: ^section_range, sections: []} =
-               Gpp.decode(input)
-    end
-  end
-
   test "full gpp strings" do
     examples = [
-      {"DBABMA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA", []},
-      {"DBACNYA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA~1YNN", []},
-      {"DBABjw~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA~1YNN", []}
+      {"DBABMA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA",
+       %Gpp{
+         section_ids: [2],
+         sections: [%Gpp.Section{id: 2, value: "CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"}]
+       }},
+      {"DBACNYA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA~1YNN",
+       %Gpp{
+         section_ids: [2, 6],
+         sections: [
+           %Gpp.Section{id: 2, value: "CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"},
+           %Gpp.Section{id: 6, value: "1YNN"}
+         ]
+       }},
+      {"DBABjw~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA~1YNN",
+       %Gpp{
+         section_ids: [5, 6],
+         sections: [
+           %Gpp.Section{id: 5, value: "CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"},
+           %Gpp.Section{id: 6, value: "1YNN"}
+         ]
+       }},
+      {"DBABBgA~xlgWEYCZAA",
+       %Gpp{
+         section_ids: [8],
+         sections: [
+           %Gpp.Section{id: 8, value: "xlgWEYCZAA"}
+         ]
+       }}
     ]
 
-    for {input, _} <- examples do
-      Gpp.decode(input)
-      |> IO.inspect()
+    for {input, expected} <- examples do
+      assert expected == Gpp.parse(input)
     end
   end
 end
