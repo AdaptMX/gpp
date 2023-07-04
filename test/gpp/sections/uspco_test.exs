@@ -37,6 +37,7 @@ defmodule Gpp.Sections.UspcoTest do
   end
 
   test "invalid input" do
-    assert {:error, :ok} = Uspco.parse("waaat")
+    assert {:error, %Gpp.BitUtil.InvalidData{message: "failed to base64 decode: \"waaat\""}} =
+             Uspco.parse("waaat")
   end
 end

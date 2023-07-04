@@ -20,9 +20,8 @@ defmodule Gpp.Sections.Tcfv2 do
   end
 
   defp segment_type(bits) do
-    {type_int, rest} = BitUtil.decode_bit3(bits)
-
-    with {:ok, type} <- Segment.id_to_segment(type_int) do
+    with {:ok, type_int, rest} <- BitUtil.parse_3bit_int(bits),
+         {:ok, type} <- Segment.id_to_segment(type_int) do
       {:ok, type, rest}
     end
   end
