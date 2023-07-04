@@ -20,12 +20,13 @@
 # Name            ips        average  deviation         median         99th %
 # parse      456.77 K        2.19 μs  ±1863.51%        1.77 μs        2.92 μs
 
-gpp = "DBACNYA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA~1YNN"
+gpp =
+  "DBACNYA~CO9AzAHO9AzAHAcABBENBACgAAAAAH_AACiQHFNf_X_fb3_j-_59_9t0eY1f9_7_v20zjgeds-8Nyd_X_L8X4mM7vB36pq4KuR4Eu3LBAQdlHOHcTUmw6IkVqTPsbk2Mr7NKJ7PEinMbe2dYGH9_n9XTuZKY79_s___z__-__v__7_f_r-3_3_vp9V---wOJAJMNS-AizEscCSaNKoUQIQriQ6AEAFFCMLRNYQErgp2VwEfoIGACA1ARgRAgxBRiyCAAAAAJKIgJADwQCIAiAQAAgBUgIQAEaAILACQMAgAFANCwAigCECQgyOCo5TAgIkWignkrAEou9jDCEMooAaBAAAAA.YAAAAAAAAAAA~1YNN"
 
 Benchee.run(
   %{
-    "parse" => fn -> Gpp.parse(gpp) end,
-    "uspco" => fn -> Gpp.Sections.Uspco.parse("bSFgmJQA.YAAA") end
+    "tcf & uspv1" => fn -> Gpp.parse(gpp) end,
+    "uspca" => fn -> Gpp.parse("DBABBgA~xlgWEYCZAA") end
   },
   parallel: System.schedulers_online()
 )

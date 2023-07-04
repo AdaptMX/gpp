@@ -5,7 +5,7 @@ defmodule Gpp do
   [Spec](https://github.com/biteractiveAdvertisingBureau/Global-Privacy-Platform)
   [Golang Implementation](https://github.com/prebid/go-gpp)
   """
-  alias Gpp.{Section, SectionRange, IdRange, FibonacciDecoder, BitUtil}
+  alias Gpp.{Sections, SectionRange, IdRange, FibonacciDecoder, BitUtil}
 
   defstruct type: 3, version: 1, section_ids: [], sections: []
 
@@ -25,6 +25,10 @@ defmodule Gpp do
     defexception [:message]
   end
 
+  defmodule DeprecatedSection do
+    defexception [:id, message: "has been deprecated"]
+  end
+
   @min_header_length 3
 
   @sections %{
@@ -38,6 +42,8 @@ defmodule Gpp do
     11 => "usput",
     12 => "uspct"
   }
+
+  def deprecated(id), do: {:error, %DeprecatedSection{id: id}}
 
   for {id, name} <- @sections do
     def section_name(unquote(id)), do: unquote(name)
@@ -151,8 +157,25 @@ defmodule Gpp do
       end)
 
     sections =
-      Enum.zip_with(input, section_ids, fn value, id -> %Section{id: id, value: value} end)
+      Enum.zip_with(input, section_ids, fn value, id ->
+        with {:ok, parser} <- parser(id),
+             {:ok, parsed} <- parser.(value) do
+          parsed
+        else
+          {:error, error} -> error
+        end
+      end)
 
     {:ok, section_ids, sections}
   end
+
+  defp parser(2), do: {:ok, &Sections.Tcfv2.parse/1}
+  defp parser(6), do: {:ok, &Sections.Uspv1.parse/1}
+  defp parser(7), do: {:ok, &Sections.Uspnat.parse/1}
+  defp parser(8), do: {:ok, &Sections.Uspca.parse/1}
+  defp parser(9), do: {:ok, &Sections.Uspva.parse/1}
+  defp parser(10), do: {:ok, &Sections.Uspco.parse/1}
+  defp parser(11), do: {:ok, &Sections.Usput.parse/1}
+  defp parser(12), do: {:ok, &Sections.Uspct.parse/1}
+  defp parser(id), do: {:error, %DeprecatedSection{id: id}}
 end
