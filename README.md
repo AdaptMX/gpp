@@ -2,6 +2,7 @@
 `Gpp` provides an Elixir implementation of GPP string decoding.
 
 [Spec](https://github.com/InteractiveAdvertisingBureau/Global-Privacy-Platform)
+
 [Golang Implementation](https://github.com/prebid/go-gpp)
 
 ## Installation
