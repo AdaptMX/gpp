@@ -3,7 +3,7 @@ defmodule Gpp.Sections.Uspco do
   defstruct [:value, :core, :usgpc, section_id: 10]
 
   def parse(input) do
-    [core, usgpc] = String.split(input, ".")
+    [core | usgpc] = String.split(input, ".")
 
     with {:ok, core} <- __MODULE__.Core.parse(core),
          {:ok, usgpc} <- Usgpc.parse(usgpc) do

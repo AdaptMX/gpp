@@ -31,7 +31,7 @@ defmodule GppTest do
          sections: [
            %Gpp.Sections.Uspca{
              value: "xlgWEYCZAA",
-             ore: %Gpp.Sections.Uspca.Core{
+             core: %Gpp.Sections.Uspca.Core{
                version: 49,
                sale_opt_out_notice: 2,
                sharing_opt_out_notice: 1,

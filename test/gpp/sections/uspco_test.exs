@@ -31,8 +31,12 @@ defmodule Gpp.Sections.UspcoTest do
                 mspa_opt_out_option_mode: 1,
                 mspa_service_provider_mode: 1
               },
-              usgpc: %Usgpc{subection_type: 1, gpc: true},
+              usgpc: %Usgpc{subsection_type: 1, gpc: true},
               value: input
             }} == Uspco.parse(input)
+  end
+
+  test "invalid input" do
+    assert {:error, :ok} = Uspco.parse("waaat")
   end
 end

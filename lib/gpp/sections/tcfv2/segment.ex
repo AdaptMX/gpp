@@ -45,9 +45,10 @@ defmodule Gpp.Sections.Tcfv2.Segment do
 
   def decode_segment(:core, segment, acc) do
     with {:ok, acc, rest} <- version(segment, acc),
-         {:ok, _field_sequence} <- field_sequence(acc) do
-      {_skipped, input} = Enum.split(rest, @skip_bits)
-      {:ok, acc, _rest} = decode_field(:vendor_consents, input, acc)
+         {:ok, _field_sequence} <- field_sequence(acc),
+         # skip the fields we aren't interested in
+         input = Enum.drop(rest, @skip_bits),
+         {:ok, acc, _rest} <- decode_vendor_consents(input, acc) do
       {:ok, acc}
     end
   end
@@ -68,7 +69,7 @@ defmodule Gpp.Sections.Tcfv2.Segment do
     {:ok, %{acc | version: version}, rest}
   end
 
-  defp decode_field(:vendor_consents, segment, acc) do
+  defp decode_vendor_consents(segment, acc) do
     with {:ok, vendor_consents, rest} <- VendorList.decode(segment) do
       {:ok, %{acc | vendor_consents: vendor_consents}, rest}
     end

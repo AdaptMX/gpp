@@ -34,7 +34,7 @@ defmodule Gpp.Sections.UspctTest do
                 mspa_opt_out_option_mode: 1,
                 mspa_service_provider_mode: 1
               },
-              usgpc: %Usgpc{subection_type: 1, gpc: true},
+              usgpc: %Usgpc{subsection_type: 1, gpc: true},
               value: input
             }} == Uspct.parse(input)
   end
