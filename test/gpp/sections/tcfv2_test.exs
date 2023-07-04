@@ -36,4 +36,9 @@ defmodule Gpp.Sections.Tcfv2Test do
     assert {:error, %Gpp.Sections.Tcfv2.DecodeError{message: "got TCF v1"}} ==
              Tcfv2.parse(input)
   end
+
+  test "error for invalid input" do
+    assert {:error, %Gpp.Sections.Tcfv2.DecodeError{message: "unknown segment type"}} ==
+             Tcfv2.parse("watttt")
+  end
 end
