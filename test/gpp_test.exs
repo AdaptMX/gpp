@@ -38,4 +38,11 @@ defmodule GppTest do
       assert {:ok, expected} == Gpp.parse(input)
     end
   end
+
+  test "invalid header" do
+    assert {:error, %Gpp.InvalidHeader{message: msg}} =
+             Gpp.parse("gA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA")
+
+    assert "header must be atleast 3 bytes long, got: \"gA\"" == msg
+  end
 end

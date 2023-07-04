@@ -2,12 +2,16 @@ defmodule Gpp do
   @moduledoc """
   IAB Global Privacy Platform
 
-  [Spec](https://github.com/InteractiveAdvertisingBureau/Global-Privacy-Platform)
+  [Spec](https://github.com/biteractiveAdvertisingBureau/Global-Privacy-Platform)
   [Golang Implementation](https://github.com/prebid/go-gpp)
   """
-  alias Gpp.{Section, SectionRange, IdRange, FibonacciDecoder}
+  alias Gpp.{Section, SectionRange, IdRange, FibonacciDecoder, BitUtil}
 
   defstruct type: 3, version: 1, section_ids: [], sections: []
+
+  defmodule InvalidHeader do
+    defexception [:message]
+  end
 
   defmodule InvalidType do
     defexception [:message]
@@ -20,6 +24,8 @@ defmodule Gpp do
   defmodule InvalidSectionRange do
     defexception [:message]
   end
+
+  @min_header_length 3
 
   @sections %{
     2 => "tcfeu2",
@@ -37,21 +43,27 @@ defmodule Gpp do
     def section_name(unquote(id)), do: unquote(name)
   end
 
+  for {id, name} <- @sections do
+    def section_id(unquote(name)), do: unquote(id)
+  end
+
   def parse(input) do
     [header | sections] = String.split(input, "~")
-    header_bits = decode_header!(header)
 
-    with {:ok, gpp, section_range} <- parse_header(header_bits) do
+    with :ok <- validate_header_length(header),
+         {:ok, header_bits} <- BitUtil.url_base64_to_bits(header),
+         {:ok, gpp, section_range} <- parse_header(header_bits) do
       parse_sections(gpp, section_range, sections)
     end
   end
 
-  defp decode_header!(string) do
-    string
-    |> Base.url_decode64!(padding: false)
-    |> then(fn b ->
-      for <<x::size(1) <- b>>, do: x
-    end)
+  defp validate_header_length(header) when byte_size(header) > @min_header_length, do: :ok
+
+  defp validate_header_length(header) do
+    {:error,
+     %InvalidHeader{
+       message: "header must be atleast #{@min_header_length} bytes long, got: #{inspect(header)}"
+     }}
   end
 
   defp parse_header(bits) do
@@ -69,9 +81,9 @@ defmodule Gpp do
     end
   end
 
-  defp type([a, b, c, d, e, f | rest]) do
-    case decode_int6([a, b, c, d, e, f]) do
-      type when type == 3 ->
+  defp type(input) do
+    case BitUtil.decode_bit6(input) do
+      {type, rest} when type == 3 ->
         {:ok, type, rest}
 
       other ->
@@ -79,22 +91,15 @@ defmodule Gpp do
     end
   end
 
-  defp type(invalid) do
-    {:error, %InvalidType{message: "got input #{inspect(invalid)}"}}
-  end
-
-  defp version([a, b, c, d, e, f | rest]) do
-    {:ok, decode_int6([a, b, c, d, e, f]), rest}
-  end
-
-  defp version(invalid) do
-    {:error, %InvalidVersion{message: "got input #{inspect(invalid)}"}}
+  defp version(input) do
+    {version, rest} = BitUtil.decode_bit6(input)
+    {:ok, version, rest}
   end
 
   defp section_range(input), do: decode_section_range(input)
 
-  defp decode_section_range([a, b, c, d, e, f, g, h, i, j, k, l | rest]) do
-    section_count = decode_int12([a, b, c, d, e, f, g, h, i, j, k, l])
+  defp decode_section_range(input) do
+    {section_count, rest} = BitUtil.decode_bit12(input)
     decode_fibonacci_range(section_count, rest)
   end
 
@@ -127,6 +132,7 @@ defmodule Gpp do
   defp decode_fibonacci_word(input, acc \\ [])
   defp decode_fibonacci_word([], acc), do: {:ok, Enum.reverse(acc)}
 
+  # fibonacci code words are variable length, but always end in 1,1
   defp decode_fibonacci_word([1, 1 | rest], acc) do
     next =
       [1, 1 | acc]
@@ -148,14 +154,5 @@ defmodule Gpp do
       Enum.zip_with(input, section_ids, fn value, id -> %Section{id: id, value: value} end)
 
     {:ok, section_ids, sections}
-  end
-
-  def decode_int6([a, b, c, d, e, f]) do
-    32 * a + 16 * b + 8 * c + 4 * d + 2 * e + f
-  end
-
-  def decode_int12([a, b, c, d, e, f, g, h, i, j, k, l]) do
-    2048 * a + 1024 * b + 512 * c + 256 * d + 128 * e + 64 * f +
-      32 * g + 16 * h + 8 * i + 4 * j + 2 * k + l
   end
 end

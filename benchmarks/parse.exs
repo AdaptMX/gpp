@@ -21,4 +21,11 @@
 # parse      456.77 K        2.19 μs  ±1863.51%        1.77 μs        2.92 μs
 
 gpp = "DBACNYA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA~1YNN"
-Benchee.run(%{"parse" => fn -> Gpp.parse(gpp) end})
+
+Benchee.run(
+  %{
+    "parse" => fn -> Gpp.parse(gpp) end,
+    "uspco" => fn -> Gpp.Sections.Uspco.parse("bSFgmJQA.YAAA") end
+  },
+  parallel: System.schedulers_online()
+)
