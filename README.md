@@ -1,11 +1,13 @@
-# Gpp
+# IAB Global Privacy Platform
+`Gpp` provides an Elixir implementation of GPP string decoding.
 
-**TODO: Add description**
+[Spec](https://github.com/InteractiveAdvertisingBureau/Global-Privacy-Platform)
+
+[Golang Implementation](https://github.com/prebid/go-gpp)
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `gpp` to your list of dependencies in `mix.exs`:
+The package can be installed by adding `gpp` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -15,7 +17,5 @@ def deps do
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/gpp>.
+The docs can be found at <https://hexdocs.pm/gpp>.
 

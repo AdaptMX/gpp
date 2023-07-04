@@ -5,19 +5,19 @@ defmodule Gpp.BitUtilTest do
   @test_binary <<0x04, 0xA2, 0x03, 0xB1, 0x00, 0x2B>>
   @test_bits BitUtil.binary_to_bits(@test_binary)
 
-  describe "decode_bit2/1" do
+  describe "parse_2bit_int/1" do
     test "examples" do
-      assert {2, []} == BitUtil.decode_bit2(Enum.slice(@test_bits, 31..32))
-      assert {3, []} == BitUtil.decode_bit2(Enum.slice(@test_bits, 23..24))
-      assert {1, []} == BitUtil.decode_bit2(Enum.slice(@test_bits, 9..10))
+      assert {:ok, 2, []} == BitUtil.parse_2bit_int(Enum.slice(@test_bits, 31..32))
+      assert {:ok, 3, []} == BitUtil.parse_2bit_int(Enum.slice(@test_bits, 23..24))
+      assert {:ok, 1, []} == BitUtil.parse_2bit_int(Enum.slice(@test_bits, 9..10))
     end
   end
 
-  describe "decode_bit6/1" do
+  describe "parse_6bit_int/1" do
     test "examples" do
-      assert {29, []} == BitUtil.decode_bit6(Enum.slice(@test_bits, 21..26))
-      assert {8, []} == BitUtil.decode_bit6(Enum.slice(@test_bits, 12..17))
-      assert {10, []} == BitUtil.decode_bit6(Enum.slice(@test_bits, 6..11))
+      assert {:ok, 29, []} == BitUtil.parse_6bit_int(Enum.slice(@test_bits, 21..26))
+      assert {:ok, 8, []} == BitUtil.parse_6bit_int(Enum.slice(@test_bits, 12..17))
+      assert {:ok, 10, []} == BitUtil.parse_6bit_int(Enum.slice(@test_bits, 6..11))
     end
   end
 
