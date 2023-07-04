@@ -29,34 +29,34 @@ defmodule Gpp.BitUtil do
   end
 
   # TODO: maybe this would be faster with bitwise operations?
-  def decode_bit2([a, b | rest]) do
+  def parse_2bit_int([a, b | rest]) do
     {:ok, 2 * a + b, rest}
   end
 
-  def decode_bit2(bits),
+  def parse_2bit_int(bits),
     do: {:error, %InvalidData{message: "expected atleast 2 bits, got: #{inspect(bits)}"}}
 
-  def decode_bit3([a, b, c | rest]) do
+  def parse_3bit_int([a, b, c | rest]) do
     {:ok, 4 * a + 2 * b + c, rest}
   end
 
-  def decode_bit3(bits),
+  def parse_3bit_int(bits),
     do: {:error, %InvalidData{message: "expected atleast 3 bits, got: #{inspect(bits)}"}}
 
-  def decode_bit6([a, b, c, d, e, f | rest]) do
+  def parse_6bit_int([a, b, c, d, e, f | rest]) do
     {:ok, 32 * a + 16 * b + 8 * c + 4 * d + 2 * e + f, rest}
   end
 
-  def decode_bit6(bits),
+  def parse_6bit_int(bits),
     do: {:error, %InvalidData{message: "expected atleast 6 bits, got: #{inspect(bits)}"}}
 
-  def decode_bit12([a, b, c, d, e, f, g, h, i, j, k, l | rest]) do
+  def parse_12bit_int([a, b, c, d, e, f, g, h, i, j, k, l | rest]) do
     {:ok,
      2048 * a + 1024 * b + 512 * c + 256 * d + 128 * e + 64 * f +
        32 * g + 16 * h + 8 * i + 4 * j + 2 * k + l, rest}
   end
 
-  def decode_bit12(bits),
+  def parse_12bit_int(bits),
     do: {:error, %InvalidData{message: "expected atleast 12 bits, got: #{inspect(bits)}"}}
 
   def decode_bit16([a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p | rest]) do
@@ -69,15 +69,15 @@ defmodule Gpp.BitUtil do
   def decode_bit16(bits),
     do: {:error, %InvalidData{message: "expected atleast 16 bits, got: #{inspect(bits)}"}}
 
-  def decode_bit2_list(input, n) do
-    decode_bit2_list(input, n, [])
+  def parse_2bit_int_list(input, n) do
+    parse_2bit_int_list(input, n, [])
   end
 
-  defp decode_bit2_list(rest, 0, acc), do: {:ok, Enum.reverse(acc), rest}
+  defp parse_2bit_int_list(rest, 0, acc), do: {:ok, Enum.reverse(acc), rest}
 
-  defp decode_bit2_list(input, n, acc) do
-    with {:ok, value, rest} <- decode_bit2(input) do
-      decode_bit2_list(rest, n - 1, [value | acc])
+  defp parse_2bit_int_list(input, n, acc) do
+    with {:ok, value, rest} <- parse_2bit_int(input) do
+      parse_2bit_int_list(rest, n - 1, [value | acc])
     end
   end
 end

@@ -65,7 +65,7 @@ defmodule Gpp.Sections.Tcfv2.Segment do
   end
 
   defp version(input, acc) do
-    with {:ok, version, rest} <- BitUtil.decode_bit6(input) do
+    with {:ok, version, rest} <- BitUtil.parse_6bit_int(input) do
       {:ok, %{acc | version: version}, rest}
     end
   end

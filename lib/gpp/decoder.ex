@@ -47,10 +47,11 @@ defmodule Gpp.Decoder do
 
   @decoders [
     {:bool, &BitUtil.decode_bool/1},
-    {:int_2_bit, &BitUtil.decode_bit2/1},
-    {:int_2_bit_list, &BitUtil.decode_bit2_list/2},
-    {:int_6_bit, &BitUtil.decode_bit6/1},
-    {:int_12_bit, &BitUtil.decode_bit12/1}
+    {:int_2bit, &BitUtil.parse_2bit_int/1},
+    {:int_2bit_list, &BitUtil.parse_2bit_int_list/2},
+    {:int_3bit, &BitUtil.parse_3bit_int/1},
+    {:int_6bit, &BitUtil.parse_6bit_int/1},
+    {:int_12bit, &BitUtil.parse_12bit_int/1}
   ]
 
   for {type, fun} <- @decoders do
@@ -61,17 +62,17 @@ defmodule Gpp.Decoder do
 
   def common_us_core_fields(sensitive_data_fields, child_data_fields) do
     [
-      version: :int_6_bit,
-      sharing_notice: :int_2_bit,
-      sale_opt_out_notice: :int_2_bit,
-      targeted_advertising_opt_out_notice: :int_2_bit,
-      sale_opt_out: :int_2_bit,
-      targeted_advertising_opt_out: :int_2_bit,
-      sensitive_data_processing: [int_2_bit_list: [sensitive_data_fields]],
-      known_child_sensitive_data_consents: [int_2_bit_list: [child_data_fields]],
-      mspa_covered_transaction: :int_2_bit,
-      mspa_opt_out_option_mode: :int_2_bit,
-      mspa_service_provider_mode: :int_2_bit
+      version: :int_6bit,
+      sharing_notice: :int_2bit,
+      sale_opt_out_notice: :int_2bit,
+      targeted_advertising_opt_out_notice: :int_2bit,
+      sale_opt_out: :int_2bit,
+      targeted_advertising_opt_out: :int_2bit,
+      sensitive_data_processing: [int_2bit_list: [sensitive_data_fields]],
+      known_child_sensitive_data_consents: [int_2bit_list: [child_data_fields]],
+      mspa_covered_transaction: :int_2bit,
+      mspa_opt_out_option_mode: :int_2bit,
+      mspa_service_provider_mode: :int_2bit
     ]
   end
 end

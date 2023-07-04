@@ -88,7 +88,7 @@ defmodule Gpp do
   end
 
   defp type(input) do
-    case BitUtil.decode_bit6(input) do
+    case BitUtil.parse_6bit_int(input) do
       {:ok, type, rest} when type == 3 ->
         {:ok, type, rest}
 
@@ -98,7 +98,7 @@ defmodule Gpp do
   end
 
   defp version(input) do
-    with {:ok, version, rest} <- BitUtil.decode_bit6(input) do
+    with {:ok, version, rest} <- BitUtil.parse_6bit_int(input) do
       {:ok, version, rest}
     end
   end
@@ -106,7 +106,7 @@ defmodule Gpp do
   defp section_range(input), do: decode_section_range(input)
 
   defp decode_section_range(input) do
-    with {:ok, section_count, rest} <- BitUtil.decode_bit12(input) do
+    with {:ok, section_count, rest} <- BitUtil.parse_12bit_int(input) do
       decode_fibonacci_range(section_count, rest)
     end
   end

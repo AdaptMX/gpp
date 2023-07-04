@@ -68,7 +68,7 @@ defmodule Gpp.Sections.Tcfv2.VendorList do
   end
 
   defp num_entries(input) do
-    with {:ok, num, rest} <- BitUtil.decode_bit12(input) do
+    with {:ok, num, rest} <- BitUtil.parse_12bit_int(input) do
       {:ok, num, rest}
     end
   end
