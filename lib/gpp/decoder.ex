@@ -23,17 +23,24 @@ defmodule Gpp.Decoder do
       defstruct unquote(Enum.map(definition, &elem(&1, 0)))
 
       def parse(input) do
-        {:ok, bits} = BitUtil.url_base64_to_bits(input)
+        with {:ok, bits} <- BitUtil.url_base64_to_bits(input),
+             {:ok, results, _rest} <- parse_bits(bits) do
+          {:ok, struct(__MODULE__, results)}
+        end
+      end
 
-        {results, _} =
-          Enum.reduce_while(unquote(updated_definition), {[], bits}, fn {field_name,
-                                                                         {function, args}},
-                                                                        {results, acc} ->
-            {value, rest} = apply(function, [acc | args])
-            {:cont, {[{field_name, value} | results], rest}}
-          end)
+      defp parse_bits(bits) do
+        Enum.reduce_while(unquote(updated_definition), {:ok, [], bits}, fn {field_name,
+                                                                            {function, args}},
+                                                                           {:ok, results, acc} ->
+          case apply(function, [acc | args]) do
+            {:ok, value, rest} ->
+              {:cont, {:ok, [{field_name, value} | results], rest}}
 
-        {:ok, struct(__MODULE__, results)}
+            {:error, _} = e ->
+              {:halt, e}
+          end
+        end)
       end
     end
   end

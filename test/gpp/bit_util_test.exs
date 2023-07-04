@@ -7,17 +7,17 @@ defmodule Gpp.BitUtilTest do
 
   describe "decode_bit2/1" do
     test "examples" do
-      assert {2, []} == BitUtil.decode_bit2(Enum.slice(@test_bits, 31..32))
-      assert {3, []} == BitUtil.decode_bit2(Enum.slice(@test_bits, 23..24))
-      assert {1, []} == BitUtil.decode_bit2(Enum.slice(@test_bits, 9..10))
+      assert {:ok, 2, []} == BitUtil.decode_bit2(Enum.slice(@test_bits, 31..32))
+      assert {:ok, 3, []} == BitUtil.decode_bit2(Enum.slice(@test_bits, 23..24))
+      assert {:ok, 1, []} == BitUtil.decode_bit2(Enum.slice(@test_bits, 9..10))
     end
   end
 
   describe "decode_bit6/1" do
     test "examples" do
-      assert {29, []} == BitUtil.decode_bit6(Enum.slice(@test_bits, 21..26))
-      assert {8, []} == BitUtil.decode_bit6(Enum.slice(@test_bits, 12..17))
-      assert {10, []} == BitUtil.decode_bit6(Enum.slice(@test_bits, 6..11))
+      assert {:ok, 29, []} == BitUtil.decode_bit6(Enum.slice(@test_bits, 21..26))
+      assert {:ok, 8, []} == BitUtil.decode_bit6(Enum.slice(@test_bits, 12..17))
+      assert {:ok, 10, []} == BitUtil.decode_bit6(Enum.slice(@test_bits, 6..11))
     end
   end
 

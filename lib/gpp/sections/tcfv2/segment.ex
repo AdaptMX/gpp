@@ -65,8 +65,9 @@ defmodule Gpp.Sections.Tcfv2.Segment do
   end
 
   defp version(input, acc) do
-    {version, rest} = BitUtil.decode_bit6(input)
-    {:ok, %{acc | version: version}, rest}
+    with {:ok, version, rest} <- BitUtil.decode_bit6(input) do
+      {:ok, %{acc | version: version}, rest}
+    end
   end
 
   defp decode_vendor_consents(segment, acc) do
