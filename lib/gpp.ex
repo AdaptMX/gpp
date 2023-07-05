@@ -171,7 +171,7 @@ defmodule Gpp do
     {:ok, section_ids, sections}
   end
 
-  defp parser(2), do: {:ok, &Sections.Tcfv2.parse/1}
+  defp parser(2), do: {:ok, &Sections.Tcf.parse/1}
   defp parser(6), do: {:ok, &Sections.Uspv1.parse/1}
   defp parser(7), do: {:ok, &Sections.Uspnat.parse/1}
   defp parser(8), do: {:ok, &Sections.Uspca.parse/1}

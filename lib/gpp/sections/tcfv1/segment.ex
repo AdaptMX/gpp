@@ -1,4 +1,4 @@
-defmodule Gpp.Sections.Tcfv2.Segment do
+defmodule Gpp.Sections.Tcfv1.Segment do
   @moduledoc false
   alias Gpp.Sections.Tcf
   alias Gpp.Sections.Tcf.{VendorList, DecodeError}
@@ -13,24 +13,15 @@ defmodule Gpp.Sections.Tcfv2.Segment do
   # :consent_screen, 6
   # :consent_language, 12
   # :vendor_list_version, 12
-  # :tcf_policy_version, 6
-  # :is_service_specific, 1
-  # :use_non_standard_stacks, 1
-  # :special_feature_opt_ins, 12
   # :purpose_consents, 24
-  # :publisher_legitimate_interests, 24
-  # :purpose_one_treatment, 1
-  # :publisher_country_code, 12
   # :vendor_consents, 16
-  # :vendor_legitimate_interests, 12
-  # :publisher_restrictions
-  @skip_bits 36 + 36 + 12 + 12 + 6 + 12 + 12 + 6 + 1 + 1 + 12 + 24 + 24 + 1 + 12
+  @skip_bits 36 + 36 + 12 + 12 + 6 + 12 + 12 + 24
 
   def decode(:core, segment) do
     input = Enum.drop(segment, @skip_bits)
 
     with {:ok, consents, _rest} <- VendorList.decode(input) do
-      {:ok, %Tcf{version: 2, vendor_consents: consents}}
+      {:ok, %Tcf{version: 1, vendor_consents: consents}}
     end
   end
 

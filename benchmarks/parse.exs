@@ -1,9 +1,8 @@
-# rev: dcd855521d135599f49f97a40da67a50038d1c9a
 # Operating System: Linux
 # CPU Information: 12th Gen Intel(R) Core(TM) i9-12900HK
 # Number of Available Cores: 20
 # Available memory: 62.46 GB
-# Elixir 1.15.1
+# Elixir 1.15.2
 # Erlang 26.0.2
 #
 # Benchmark suite executing with the following configuration:
@@ -20,14 +19,14 @@
 # Benchmarking uspca ...
 #
 # Name                  ips        average  deviation         median         99th %
-# header           507.72 K        1.97 μs  ±2402.72%        1.54 μs        2.63 μs
-# uspca            206.22 K        4.85 μs   ±564.03%        4.28 μs        7.84 μs
-# tcf & uspv1       19.08 K       52.40 μs    ±17.30%       54.14 μs       78.33 μs
+# header          1003.31 K        1.00 μs  ±2294.40%        0.78 μs        1.46 μs
+# uspca            380.75 K        2.63 μs   ±576.13%        2.21 μs        4.25 μs
+# tcf & uspv1       36.89 K       27.11 μs    ±19.34%       25.26 μs       37.67 μs
 #
-# Comparison:
-# header           507.72 K
-# uspca            206.22 K - 2.46x slower +2.88 μs
-# tcf & uspv1       19.08 K - 26.61x slower +50.43 μs
+# Comparison: 
+# header          1003.31 K
+# uspca            380.75 K - 2.64x slower +1.63 μs
+# tcf & uspv1       36.89 K - 27.20x slower +26.11 μs
 
 tcf_uspv1 =
   "DBACNYA~CO9AzAHO9AzAHAcABBENBACgAAAAAH_AACiQHFNf_X_fb3_j-_59_9t0eY1f9_7_v20zjgeds-8Nyd_X_L8X4mM7vB36pq4KuR4Eu3LBAQdlHOHcTUmw6IkVqTPsbk2Mr7NKJ7PEinMbe2dYGH9_n9XTuZKY79_s___z__-__v__7_f_r-3_3_vp9V---wOJAJMNS-AizEscCSaNKoUQIQriQ6AEAFFCMLRNYQErgp2VwEfoIGACA1ARgRAgxBRiyCAAAAAJKIgJADwQCIAiAQAAgBUgIQAEaAILACQMAgAFANCwAigCECQgyOCo5TAgIkWignkrAEou9jDCEMooAaBAAAAA.YAAAAAAAAAAA~1YNN"

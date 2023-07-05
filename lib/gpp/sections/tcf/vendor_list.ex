@@ -1,8 +1,8 @@
-defmodule Gpp.Sections.Tcfv2.VendorList do
+defmodule Gpp.Sections.Tcf.VendorList do
   @moduledoc false
 
   alias Gpp.BitUtil
-  alias Gpp.Sections.Tcfv2.DecodeError
+  alias Gpp.Sections.Tcf.DecodeError
 
   @encoding_type %{
     0 => :field,

@@ -7,13 +7,13 @@ defmodule GppTest do
       {"DBABMA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA",
        %Gpp{
          section_ids: [2],
-         sections: [%Gpp.Sections.Tcfv2{vendor_consents: [], version: 2}]
+         sections: [%Gpp.Sections.Tcf{vendor_consents: [], version: 2}]
        }},
       {"DBACNYA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA~1YNN",
        %Gpp{
          section_ids: [2, 6],
          sections: [
-           %Gpp.Sections.Tcfv2{vendor_consents: [], version: 2},
+           %Gpp.Sections.Tcf{vendor_consents: [], version: 2},
            %Gpp.Sections.Uspv1{id: 6, value: "1YNN"}
          ]
        }},
