@@ -26,3 +26,4 @@ gpp-*.tar
 /tmp/
 
 /.elixir-tools/
+*.bggg
