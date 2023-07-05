@@ -15,7 +15,10 @@ defmodule Gpp.BitUtil do
   end
 
   def url_base64_to_bits([input]) when is_binary(input), do: url_base64_to_bits(input)
-  def url_base64_to_bits(invalid), do: {:error, %InvalidData{message: "got: #{inspect(invalid)}"}}
+
+  def url_base64_to_bits(invalid) do
+    {:error, %InvalidData{message: "failed to base64 decode, got: #{inspect(invalid)}"}}
+  end
 
   def binary_to_bits(binary) do
     for <<x::size(1) <- binary>>, do: x
