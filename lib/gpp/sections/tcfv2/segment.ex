@@ -10,7 +10,9 @@ defmodule Gpp.Sections.Tcfv2.Segment do
     3 => :publisher_tc
   }
 
-  # full field list with lengths
+  # full field list with lengths we are only interested in vendor_consents,
+  # so we skip straight to that field
+  #
   # :created, 36
   # :last_updated, 36
   # :cmp_id, 12
