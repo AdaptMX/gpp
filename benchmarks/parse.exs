@@ -1,3 +1,4 @@
+# rev: 76a5867ebd1fb638977c10dc799ea8bb70e8d69c
 # Operating System: Linux
 # CPU Information: 12th Gen Intel(R) Core(TM) i9-12900HK
 # Number of Available Cores: 20
