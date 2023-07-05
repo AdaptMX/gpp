@@ -1,6 +1,8 @@
 # IAB Global Privacy Platform
 `Gpp` provides an Elixir implementation of GPP string decoding.
 
+Supports TCF (v1.1 & v2), USPCA, USPCO, USPCT, USPNAT, USPUT, and USPVA.
+
 [Spec](https://github.com/InteractiveAdvertisingBureau/Global-Privacy-Platform)
 
 [Golang Implementation](https://github.com/prebid/go-gpp)
