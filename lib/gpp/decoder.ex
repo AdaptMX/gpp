@@ -1,6 +1,18 @@
 defmodule Gpp.Decoder do
   alias Gpp.BitUtil
 
+  defp type_to_spec(:bool) do
+    quote do
+      boolean()
+    end
+  end
+
+  defp type_to_spec(_) do
+    quote do
+      non_neg_integer()
+    end
+  end
+
   defmacro __using__(definition) do
     definition = Keyword.get(definition, :common_us_core, definition)
 
@@ -19,9 +31,19 @@ defmodule Gpp.Decoder do
         {name, fun} -> {name, {resolve_fun(fun), []}}
       end)
 
+    spec =
+      Enum.map(definition, fn
+        {name, [{fun, _args}]} -> {name, type_to_spec(fun)}
+        {name, fun} -> {name, type_to_spec(fun)}
+      end)
+
     quote do
+      @type t :: %__MODULE__{
+              unquote_splicing(spec)
+            }
       defstruct unquote(Enum.map(definition, &elem(&1, 0)))
 
+      @spec parse(String.t()) :: {:ok, t()} | {:error, Exception.t()}
       def parse(input) do
         with {:ok, bits} <- BitUtil.url_base64_to_bits(input),
              {:ok, results, _rest} <- parse_bits(bits) do
@@ -55,10 +77,10 @@ defmodule Gpp.Decoder do
   ]
 
   for {type, fun} <- @decoders do
-    def resolve_fun(unquote(type)), do: unquote(fun)
+    defp resolve_fun(unquote(type)), do: unquote(fun)
   end
 
-  def resolve_fun(other), do: raise(ArgumentError, "unknown type #{inspect(other)}")
+  defp resolve_fun(other), do: raise(ArgumentError, "unknown type #{inspect(other)}")
 
   def common_us_core_fields(sensitive_data_fields, child_data_fields) do
     [

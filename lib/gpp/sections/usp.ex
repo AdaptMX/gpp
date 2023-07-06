@@ -18,6 +18,13 @@ defmodule Gpp.Sections.Usp do
     if usgpc? do
       quote bind_quoted: [fields: fields] do
         alias Gpp.Sections.Usp
+
+        @type t :: %__MODULE__{
+                value: String.t(),
+                core: __MODULE__.Core.t(),
+                section_id: Gpp.section_id(),
+                usgpc: Usgpc.t()
+              }
         defstruct fields
 
         def parse(input), do: Usp.parse_with_usgpc(__MODULE__, __MODULE__.Core, input)
@@ -25,6 +32,12 @@ defmodule Gpp.Sections.Usp do
     else
       quote bind_quoted: [fields: fields] do
         alias Gpp.Sections.Usp
+
+        @type t :: %__MODULE__{
+                value: String.t(),
+                core: __MODULE__.Core.t(),
+                section_id: Gpp.section_id()
+              }
         defstruct fields
 
         def parse(input), do: Usp.parse(__MODULE__, __MODULE__.Core, input)

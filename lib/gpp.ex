@@ -6,6 +6,14 @@ defmodule Gpp do
   """
   alias Gpp.{Sections, SectionRange, IdRange, FibonacciDecoder, BitUtil}
 
+  @type section_id :: pos_integer()
+  @type t :: %__MODULE__{
+          type: pos_integer(),
+          version: pos_integer(),
+          section_ids: [section_id()],
+          sections: []
+        }
+
   defstruct type: 3, version: 1, section_ids: [], sections: []
 
   defmodule InvalidHeader do
@@ -42,6 +50,7 @@ defmodule Gpp do
     12 => {"uspct", &Sections.Uspct.parse/1}
   }
 
+  @spec parse(String.t()) :: {:ok, t()} | {:error, term()}
   def parse(input) do
     [header | sections] = String.split(input, "~")
 

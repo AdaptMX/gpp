@@ -28,6 +28,7 @@ defmodule Gpp.MixProject do
 
   defp deps do
     [
+      {:ex_doc, "~> 0.27", only: :dev, runtime: false},
       {:benchee, "~> 1.0", only: :dev},
       {:eflambe, "~> 0.3.0", only: :dev}
     ]

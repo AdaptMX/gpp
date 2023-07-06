@@ -11,8 +11,8 @@ defmodule Gpp.FibonacciDecoder do
   end
 
   @doc """
-    iex> Gpp.FibonacciDecoder.decode!([1, 0, 0, 0, 0, 1, 1])
-    14
+      iex> Gpp.FibonacciDecoder.decode!([1, 0, 0, 0, 0, 1, 1])
+      14
   """
   def decode!(input), do: decode!(input, 3, 0)
 
