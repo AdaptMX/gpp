@@ -117,22 +117,22 @@ defmodule Gpp do
     {:ok, %{acc | range: Enum.reverse(range)}}
   end
 
-  defp decode_fibonacci_range(count, [next_bit | input], acc) do
-    if next_bit == 0 do
-      {offset, rest} = decode_fibonacci_word(input)
-      entry = acc.max + offset
-      id_range = %IdRange{start_id: entry, end_id: entry}
-      acc = %{acc | max: max(entry, acc.max), range: [id_range | acc.range]}
-      decode_fibonacci_range(count - 1, rest, acc)
-    else
-      {offset, rest} = decode_fibonacci_word(input)
-      {second_offset, rest} = decode_fibonacci_word(rest)
-      start_id = acc.max + offset
-      end_id = start_id + second_offset
-      id_range = %IdRange{start_id: start_id, end_id: end_id}
-      acc = %{acc | max: max(end_id, acc.max), range: [id_range | acc.range]}
-      decode_fibonacci_range(count - 1, rest, acc)
-    end
+  defp decode_fibonacci_range(count, [0 | input], acc) do
+    {offset, rest} = decode_fibonacci_word(input)
+    entry = acc.max + offset
+    id_range = %IdRange{start_id: entry, end_id: entry}
+    acc = %{acc | max: max(entry, acc.max), range: [id_range | acc.range]}
+    decode_fibonacci_range(count - 1, rest, acc)
+  end
+
+  defp decode_fibonacci_range(count, [1 | input], acc) do
+    {offset, rest} = decode_fibonacci_word(input)
+    {second_offset, rest} = decode_fibonacci_word(rest)
+    start_id = acc.max + offset
+    end_id = start_id + second_offset
+    id_range = %IdRange{start_id: start_id, end_id: end_id}
+    acc = %{acc | max: max(end_id, acc.max), range: [id_range | acc.range]}
+    decode_fibonacci_range(count - 1, rest, acc)
   end
 
   defp decode_fibonacci_word(input, acc \\ [])
