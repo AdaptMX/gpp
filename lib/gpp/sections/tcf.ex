@@ -8,6 +8,8 @@ defmodule Gpp.Sections.Tcf do
   alias Gpp.Sections.Tcf.DecodeError
   alias Gpp.Sections.{Tcfv1, Tcfv2}
 
+  @type vendor_id :: pos_integer()
+  @type t :: %__MODULE__{version: pos_integer(), vendor_consents: [vendor_id()]}
   defstruct [
     :version,
     :vendor_consents
@@ -24,6 +26,22 @@ defmodule Gpp.Sections.Tcf do
         other -> {:error, %DecodeError{message: "unknown TCF version: #{other}"}}
       end
     end
+  end
+
+  @doc """
+  Checks if the provided vendor_id is in the list of vendor_consents
+
+  ## Examples
+
+      iex> Tcf.vendor_has_consent?(%Tcf{vendor_consents: [8, 6, 2]}, 8)
+      true
+
+      iex> Tcf.vendor_has_consent?(%Tcf{vendor_consents: [8, 6, 2]}, 123)
+      false
+  """
+  @spec vendor_has_consent?(t(), vendor_id()) :: boolean()
+  def vendor_has_consent?(%{vendor_consents: consents}, vendor_id) do
+    vendor_id in consents
   end
 
   defp segment_type(bits) do

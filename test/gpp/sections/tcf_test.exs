@@ -1,6 +1,7 @@
 defmodule Gpp.Sections.TcfTest do
   use ExUnit.Case, async: true
   alias Gpp.Sections.Tcf
+  doctest Tcf
 
   describe "parse v1.1" do
     test "example" do
