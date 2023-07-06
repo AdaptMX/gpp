@@ -1,9 +1,8 @@
 defmodule Gpp do
   @moduledoc """
-  IAB Global Privacy Platform
+  IAB Global Privacy Platform string decoding.
 
   [Spec](https://github.com/biteractiveAdvertisingBureau/Global-Privacy-Platform)
-  [Golang Implementation](https://github.com/prebid/go-gpp)
   """
   alias Gpp.{Sections, SectionRange, IdRange, FibonacciDecoder, BitUtil}
 
@@ -32,26 +31,16 @@ defmodule Gpp do
   @min_header_length 3
 
   @sections %{
-    2 => "tcfeu2",
-    3 => "gpp header",
-    6 => "uspv1",
-    7 => "uspnat",
-    8 => "uspca",
-    9 => "uspva",
-    10 => "uspco",
-    11 => "usput",
-    12 => "uspct"
+    2 => {"tcfeu2", &Sections.Tcf.parse/1},
+    3 => {"gpp header", nil},
+    6 => {"uspv1", &Sections.Uspv1.parse/1},
+    7 => {"uspnat", &Sections.Uspnat.parse/1},
+    8 => {"uspca", &Sections.Uspca.parse/1},
+    9 => {"uspva", &Sections.Uspva.parse/1},
+    10 => {"uspco", &Sections.Uspco.parse/1},
+    11 => {"usput", &Sections.Usput.parse/1},
+    12 => {"uspct", &Sections.Uspct.parse/1}
   }
-
-  def deprecated(id), do: {:error, %DeprecatedSection{id: id}}
-
-  for {id, name} <- @sections do
-    def section_name(unquote(id)), do: unquote(name)
-  end
-
-  for {id, name} <- @sections do
-    def section_id(unquote(name)), do: unquote(id)
-  end
 
   def parse(input) do
     [header | sections] = String.split(input, "~")
@@ -171,13 +160,9 @@ defmodule Gpp do
     {:ok, section_ids, sections}
   end
 
-  defp parser(2), do: {:ok, &Sections.Tcf.parse/1}
-  defp parser(6), do: {:ok, &Sections.Uspv1.parse/1}
-  defp parser(7), do: {:ok, &Sections.Uspnat.parse/1}
-  defp parser(8), do: {:ok, &Sections.Uspca.parse/1}
-  defp parser(9), do: {:ok, &Sections.Uspva.parse/1}
-  defp parser(10), do: {:ok, &Sections.Uspco.parse/1}
-  defp parser(11), do: {:ok, &Sections.Usput.parse/1}
-  defp parser(12), do: {:ok, &Sections.Uspct.parse/1}
+  for {id, {_, fun}} when is_function(fun) <- @sections do
+    defp parser(unquote(id)), do: {:ok, unquote(fun)}
+  end
+
   defp parser(id), do: {:error, %DeprecatedSection{id: id}}
 end
