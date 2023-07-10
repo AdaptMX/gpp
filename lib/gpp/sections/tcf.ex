@@ -7,6 +7,7 @@ defmodule Gpp.Sections.Tcf do
   alias Gpp.BitUtil
   alias Gpp.Sections.Tcf.DecodeError
   alias Gpp.Sections.{Tcfv1, Tcfv2}
+  @behaviour Gpp.Section
 
   @type vendor_id :: pos_integer()
   @type t :: %__MODULE__{version: pos_integer(), vendor_consents: [vendor_id()]}
@@ -15,6 +16,7 @@ defmodule Gpp.Sections.Tcf do
     :vendor_consents
   ]
 
+  @impl Gpp.Section
   def parse(input) do
     with [core_segment | _] <- String.split(input, ".", parts: 2),
          {:ok, bits} <- BitUtil.url_base64_to_bits(core_segment),
@@ -33,14 +35,14 @@ defmodule Gpp.Sections.Tcf do
 
   ## Examples
 
-      iex> Tcf.vendor_has_consent?(%Tcf{vendor_consents: [8, 6, 2]}, 8)
+      iex> Tcf.has_consent?(%Tcf{vendor_consents: [8, 6, 2]}, 8)
       true
 
-      iex> Tcf.vendor_has_consent?(%Tcf{vendor_consents: [8, 6, 2]}, 123)
+      iex> Tcf.has_consent?(%Tcf{vendor_consents: [8, 6, 2]}, 123)
       false
   """
-  @spec vendor_has_consent?(t(), vendor_id()) :: boolean()
-  def vendor_has_consent?(%{vendor_consents: consents}, vendor_id) do
+  @spec has_consent?(t(), vendor_id()) :: boolean()
+  def has_consent?(%{vendor_consents: consents}, vendor_id) do
     vendor_id in consents
   end
 
