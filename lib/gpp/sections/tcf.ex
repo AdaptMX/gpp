@@ -12,6 +12,7 @@ defmodule Gpp.Sections.Tcf do
   @type vendor_id :: pos_integer()
   @type t :: %__MODULE__{version: pos_integer(), vendor_consents: [vendor_id()]}
   defstruct [
+    :section_id,
     :version,
     :vendor_consents
   ]

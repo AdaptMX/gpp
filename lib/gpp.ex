@@ -51,6 +51,7 @@ defmodule Gpp do
   @sections %{
     2 => {"tcfeu2", &Sections.Tcf.parse/1},
     3 => {"gpp header", nil},
+    5 => {"tcfcav1", &Sections.Tcf.parse/1},
     6 => {"uspv1", &Sections.Uspv1.parse/1},
     7 => {"uspnat", &Sections.Uspnat.parse/1},
     8 => {"uspca", &Sections.Uspca.parse/1},
@@ -170,7 +171,7 @@ defmodule Gpp do
       Enum.zip_with(input, section_ids, fn value, id ->
         with {:ok, parser} <- parser(id),
              {:ok, parsed} <- parser.(value) do
-          parsed
+          %{parsed | section_id: id}
         else
           {:error, error} -> error
         end

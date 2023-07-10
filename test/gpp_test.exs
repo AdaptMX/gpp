@@ -7,15 +7,15 @@ defmodule GppTest do
       {"DBABMA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA",
        %Gpp{
          section_ids: [2],
-         sections: [%Gpp.Sections.Tcf{vendor_consents: [], version: 2}]
+         sections: [%Gpp.Sections.Tcf{section_id: 2, vendor_consents: [], version: 2}]
        }},
       {"DBACNYA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA~1YNN",
        %Gpp{
          section_ids: [2, 6],
          sections: [
-           %Gpp.Sections.Tcf{vendor_consents: [], version: 2},
+           %Gpp.Sections.Tcf{section_id: 2, vendor_consents: [], version: 2},
            %Gpp.Sections.Uspv1{
-             id: 6,
+             section_id: 6,
              lspa_covered_transaction: false,
              opt_out_notice: true,
              sale_opt_out: false,
@@ -24,21 +24,23 @@ defmodule GppTest do
            }
          ]
        }},
-      {"DBABjw~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA~1YNN",
-       %Gpp{
-         section_ids: [5, 6],
-         sections: [
-           %Gpp.DeprecatedSection{id: 5, message: "has been deprecated"},
-           %Gpp.Sections.Uspv1{
-             id: 6,
-             lspa_covered_transaction: false,
-             opt_out_notice: true,
-             sale_opt_out: false,
-             value: "1YNN",
-             version: 1
-           }
-         ]
-       }},
+      {
+        "DBABjw~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA~1YNN",
+        %Gpp{
+          section_ids: [5, 6],
+          sections: [
+            %Gpp.Sections.Tcf{section_id: 5, vendor_consents: [], version: 2},
+            %Gpp.Sections.Uspv1{
+              section_id: 6,
+              lspa_covered_transaction: false,
+              opt_out_notice: true,
+              sale_opt_out: false,
+              value: "1YNN",
+              version: 1
+            }
+          ]
+        }
+      },
       {"DBABBgA~xlgWEYCZAA",
        %Gpp{
          section_ids: [8],
@@ -66,7 +68,7 @@ defmodule GppTest do
        }}
     ]
 
-    for {input, expected <- examples do
+    for {input, expected} <- examples do
       assert {:ok, expected} == Gpp.parse(input)
     end
   end
