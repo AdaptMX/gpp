@@ -3,7 +3,6 @@ defmodule Gpp.BitUtil do
     defexception [:message]
   end
 
-  # TODO: return :ok|:error tuples from all of these functions
   def url_base64_to_bits(input) when is_binary(input) do
     case Base.url_decode64(input, padding: false) do
       {:ok, binary} ->

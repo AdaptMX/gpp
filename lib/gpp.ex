@@ -5,13 +5,23 @@ defmodule Gpp do
   [Spec](https://github.com/biteractiveAdvertisingBureau/Global-Privacy-Platform)
   """
   alias Gpp.{Sections, SectionRange, IdRange, FibonacciDecoder, BitUtil}
+  alias Gpp.Sections.{Uspca, Uspco, Uspct, Usput, Uspv1, Uspva, Uspnat, Tcf}
 
+  @type section ::
+          Tcf.t()
+          | Uspca.t()
+          | Uspco.t()
+          | Uspct.t()
+          | Usput.t()
+          | Uspv1.t()
+          | Uspva.t()
+          | Uspnat.t()
   @type section_id :: pos_integer()
   @type t :: %__MODULE__{
           type: pos_integer(),
           version: pos_integer(),
           section_ids: [section_id()],
-          sections: []
+          sections: [section()]
         }
 
   defstruct type: 3, version: 1, section_ids: [], sections: []
