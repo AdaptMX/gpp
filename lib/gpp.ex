@@ -43,7 +43,7 @@ defmodule Gpp do
   end
 
   defmodule DeprecatedSection do
-    defexception [:id, message: "has been deprecated"]
+    defexception [:section_id, message: "has been deprecated"]
   end
 
   @min_header_length 3
@@ -184,5 +184,5 @@ defmodule Gpp do
     defp parser(unquote(id)), do: {:ok, unquote(fun)}
   end
 
-  defp parser(id), do: {:error, %DeprecatedSection{id: id}}
+  defp parser(id), do: {:error, %DeprecatedSection{section_id: id}}
 end
