@@ -8,7 +8,14 @@ defmodule Gpp.Sections.Uspv1 do
           lspa_covered_transaction: boolean(),
           version: pos_integer()
         }
-  defstruct [:value, :opt_out_notice, :sale_opt_out, :lspa_covered_transaction, section_id: 6, version: 1]
+  defstruct [
+    :value,
+    :opt_out_notice,
+    :sale_opt_out,
+    :lspa_covered_transaction,
+    section_id: 6,
+    version: 1
+  ]
 
   defmodule InvalidVersion do
     defexception [:message]
