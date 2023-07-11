@@ -61,8 +61,8 @@ defmodule Gpp do
     12 => {"uspct", &Sections.Uspct.parse/1}
   }
 
-  @spec parse(String.t()) :: {:ok, t()} | {:error, term()}
-  def parse(input) do
+  @spec parse(String.t()) :: {:ok, t()} | {:error, Exception.t()}
+  def parse(input) when byte_size(input) > 3 do
     [header | sections] = String.split(input, "~")
 
     with :ok <- validate_header_length(header),
@@ -71,6 +71,8 @@ defmodule Gpp do
       parse_sections(gpp, section_range, sections)
     end
   end
+
+  def parse(invalid), do: {:error, %InvalidHeader{message: "got: #{inspect(invalid)}"}}
 
   defp validate_header_length(header) when byte_size(header) > @min_header_length, do: :ok
 
