@@ -2,14 +2,14 @@ defmodule Gpp.MixProject do
   use Mix.Project
 
   @name "Gpp"
-  @version "0.1.0"
+  @version "0.1.1"
   @repo_url "https://github.com/Adaptmx/gpp"
 
   def project do
     [
       app: :gpp,
       version: @version,
-      elixir: "~> 1.14",
+      elixir: "~> 1.12",
       description: "Decode IAB GPP strings including the region specific sections they contain.",
       package: package(),
       docs: docs(),
