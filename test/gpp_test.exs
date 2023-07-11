@@ -6,11 +6,13 @@ defmodule GppTest do
     examples = [
       {"DBABMA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA",
        %Gpp{
+         header: "DBABMA",
          section_ids: [2],
          sections: [%Gpp.Sections.Tcf{section_id: 2, vendor_consents: [], version: 2}]
        }},
       {"DBACNYA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA~1YNN",
        %Gpp{
+         header: "DBACNYA",
          section_ids: [2, 6],
          sections: [
            %Gpp.Sections.Tcf{section_id: 2, vendor_consents: [], version: 2},
@@ -27,6 +29,7 @@ defmodule GppTest do
       {
         "DBABjw~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA~1YNN",
         %Gpp{
+          header: "DBABjw",
           section_ids: [5, 6],
           sections: [
             %Gpp.Sections.Tcf{section_id: 5, vendor_consents: [], version: 2},
@@ -43,6 +46,7 @@ defmodule GppTest do
       },
       {"DBABBgA~xlgWEYCZAA",
        %Gpp{
+         header: "DBABBgA",
          section_ids: [8],
          sections: [
            %Gpp.Sections.Uspca{
@@ -78,5 +82,11 @@ defmodule GppTest do
              Gpp.parse("gA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA")
 
     assert "header must be atleast 3 bytes long, got: \"gA\"" == msg
+  end
+
+  test "to_string/1 converts Gpp struct back to a string" do
+    input = "DBABBgA~xlgWEYCZAA"
+    {:ok, gpp} = Gpp.parse(input)
+    assert input == Gpp.to_string(gpp)
   end
 end

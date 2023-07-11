@@ -10,7 +10,7 @@ defmodule Gpp.Sections.Tcf.VendorList do
   }
 
   def decode(input) do
-    with {:ok, max_id, rest} <- BitUtil.decode_bit16(input),
+    with {:ok, max_id, rest} <- BitUtil.parse_16bit_int(input),
          {:ok, encoding_type, rest} <- encoding_type(rest) do
       do_decode(encoding_type, rest, max_id)
     end
@@ -45,8 +45,8 @@ defmodule Gpp.Sections.Tcf.VendorList do
   end
 
   defp extract_entries(input, entries, true) do
-    with {:ok, start_id, rest} <- BitUtil.decode_bit16(input),
-         {:ok, end_id, rest} <- BitUtil.decode_bit16(rest) do
+    with {:ok, start_id, rest} <- BitUtil.parse_16bit_int(input),
+         {:ok, end_id, rest} <- BitUtil.parse_16bit_int(rest) do
       updated_entries = Enum.reduce(start_id..end_id, entries, fn id, acc -> [id | acc] end)
       {:ok, updated_entries, rest}
     else
@@ -55,7 +55,7 @@ defmodule Gpp.Sections.Tcf.VendorList do
   end
 
   defp extract_entries(input, entries, false) do
-    with {:ok, vendor_id, rest} <- BitUtil.decode_bit16(input) do
+    with {:ok, vendor_id, rest} <- BitUtil.parse_16bit_int(input) do
       {:ok, [vendor_id | entries], rest}
     end
   end

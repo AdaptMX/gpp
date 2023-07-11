@@ -18,13 +18,14 @@ defmodule Gpp do
           | Uspnat.t()
   @type section_id :: pos_integer()
   @type t :: %__MODULE__{
+          header: String.t(),
           type: pos_integer(),
           version: pos_integer(),
           section_ids: [section_id()],
           sections: [section()]
         }
 
-  defstruct type: 3, version: 1, section_ids: [], sections: []
+  defstruct [:header, type: 3, version: 1, section_ids: [], sections: []]
 
   defmodule InvalidHeader do
     defexception [:message]
@@ -61,15 +62,23 @@ defmodule Gpp do
     12 => {"uspct", &Sections.Uspct.parse/1}
   }
 
-  @spec parse(String.t()) :: {:ok, t()} | {:error, term()}
+  @spec parse(String.t()) :: {:ok, t()} | {:error, Exception.t()}
   def parse(input) do
     [header | sections] = String.split(input, "~")
 
     with :ok <- validate_header_length(header),
          {:ok, header_bits} <- BitUtil.url_base64_to_bits(header),
-         {:ok, gpp, section_range} <- parse_header(header_bits) do
+         {:ok, gpp, section_range} <- parse_header(header, header_bits) do
       parse_sections(gpp, section_range, sections)
     end
+  end
+
+  @spec to_string(t()) :: String.t()
+  def to_string(gpp) do
+    Enum.map_join([gpp.header | gpp.sections], "~", fn
+      str when is_binary(str) -> str
+      %{value: value} -> value
+    end)
   end
 
   defp validate_header_length(header) when byte_size(header) > @min_header_length, do: :ok
@@ -81,11 +90,11 @@ defmodule Gpp do
      }}
   end
 
-  defp parse_header(bits) do
+  defp parse_header(header, bits) do
     with {:ok, type, version_and_section_range} <- type(bits),
          {:ok, version, rest} <- version(version_and_section_range),
          {:ok, section_range} <- section_range(rest) do
-      {:ok, %__MODULE__{type: type, version: version}, section_range}
+      {:ok, %__MODULE__{header: header, type: type, version: version}, section_range}
     end
   end
 

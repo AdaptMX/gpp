@@ -68,7 +68,7 @@ defmodule Gpp.Decoder do
   end
 
   @decoders [
-    {:bool, &BitUtil.decode_bool/1},
+    {:bool, &BitUtil.parse_bool/1},
     {:int_2bit, &BitUtil.parse_2bit_int/1},
     {:int_2bit_list, &BitUtil.parse_2bit_int_list/2},
     {:int_3bit, &BitUtil.parse_3bit_int/1},

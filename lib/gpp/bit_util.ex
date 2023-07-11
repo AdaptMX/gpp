@@ -3,6 +3,9 @@ defmodule Gpp.BitUtil do
     defexception [:message]
   end
 
+  @type bit :: 0 | 1
+
+  @spec url_base64_to_bits(String.t()) :: {:ok, [bit()]} | {:error, Exception.t()}
   def url_base64_to_bits(input) when is_binary(input) do
     case Base.url_decode64(input, padding: false) do
       {:ok, binary} ->
@@ -23,10 +26,10 @@ defmodule Gpp.BitUtil do
     for <<x::size(1) <- binary>>, do: x
   end
 
-  def decode_bool([0 | rest]), do: {:ok, false, rest}
-  def decode_bool([1 | rest]), do: {:ok, true, rest}
+  def parse_bool([0 | rest]), do: {:ok, false, rest}
+  def parse_bool([1 | rest]), do: {:ok, true, rest}
 
-  def decode_bool([val | _]) do
+  def parse_bool([val | _]) do
     {:error, %InvalidData{message: "expected 1 or 0, got: #{inspect(val)}"}}
   end
 
@@ -61,14 +64,14 @@ defmodule Gpp.BitUtil do
   def parse_12bit_int(bits),
     do: {:error, %InvalidData{message: "expected atleast 12 bits, got: #{inspect(bits)}"}}
 
-  def decode_bit16([a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p | rest]) do
+  def parse_16bit_int([a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p | rest]) do
     {:ok,
      32768 * a + 16384 * b + 8192 * c + 4096 * d + 2048 * e +
        1024 * f + 512 * g + 256 * h + 128 * i + 64 * j +
        32 * k + 16 * l + 8 * m + 4 * n + 2 * o + p, rest}
   end
 
-  def decode_bit16(bits),
+  def parse_16bit_int(bits),
     do: {:error, %InvalidData{message: "expected atleast 16 bits, got: #{inspect(bits)}"}}
 
   def parse_2bit_int_list(input, n) do
