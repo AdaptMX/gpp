@@ -85,4 +85,20 @@ defmodule GppTest do
       assert {:error, %Gpp.InvalidHeader{}} = Gpp.parse(invalid)
     end
   end
+
+  test "section_id_to_name!/1" do
+    assert "tcfeu2" == Gpp.section_id_to_name!(2)
+
+    assert_raise(Gpp.UnknownSection, fn ->
+      Gpp.section_id_to_name!(999)
+    end)
+  end
+
+  test "section_name_to_id!/1" do
+    assert 2 == Gpp.section_name_to_id!("tcfeu2")
+
+    assert_raise(Gpp.UnknownSection, fn ->
+      Gpp.section_name_to_id!("wat")
+    end)
+  end
 end

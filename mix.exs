@@ -2,7 +2,7 @@ defmodule Gpp.MixProject do
   use Mix.Project
 
   @name "Gpp"
-  @version "0.1.2"
+  @version "0.1.3"
   @repo_url "https://github.com/Adaptmx/gpp"
 
   def project do

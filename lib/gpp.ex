@@ -42,6 +42,10 @@ defmodule Gpp do
     defexception [:message]
   end
 
+  defmodule UnknownSection do
+    defexception [:message]
+  end
+
   defmodule DeprecatedSection do
     defexception [:section_id, message: "has been deprecated"]
   end
@@ -73,6 +77,19 @@ defmodule Gpp do
   end
 
   def parse(invalid), do: {:error, %InvalidHeader{message: "got: #{inspect(invalid)}"}}
+
+  for {sid, {name, _}} <- @sections do
+    def section_id_to_name!(unquote(sid)), do: unquote(name)
+    def section_name_to_id!(unquote(name)), do: unquote(sid)
+  end
+
+  def section_id_to_name!(unknown) do
+    raise UnknownSection, "got id: #{inspect(unknown)}"
+  end
+
+  def section_name_to_id!(unknown) do
+    raise UnknownSection, "got name: #{inspect(unknown)}"
+  end
 
   defp validate_header_length(header) when byte_size(header) > @min_header_length, do: :ok
 
