@@ -26,11 +26,11 @@ defmodule Gpp.Sections.Tcfv2.Segment do
   # :publisher_restrictions
   @skip_bits 36 + 36 + 12 + 12 + 6 + 12 + 12 + 6 + 1 + 1 + 12 + 24 + 24 + 1 + 12
 
-  def decode(:core, segment) do
+  def decode(full_string, :core, segment) do
     input = Enum.drop(segment, @skip_bits)
 
     with {:ok, consents, _rest} <- VendorList.decode(input) do
-      {:ok, %Tcf{version: 2, vendor_consents: consents}}
+      {:ok, %Tcf{version: 2, value: full_string, vendor_consents: consents}}
     end
   end
 

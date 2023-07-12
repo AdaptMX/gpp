@@ -7,13 +7,25 @@ defmodule GppTest do
       {"DBABMA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA",
        %Gpp{
          section_ids: [2],
-         sections: [%Gpp.Sections.Tcf{section_id: 2, vendor_consents: [], version: 2}]
+         sections: [
+           %Gpp.Sections.Tcf{
+             section_id: 2,
+             vendor_consents: [],
+             version: 2,
+             value: "CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"
+           }
+         ]
        }},
       {"DBACNYA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA~1YNN",
        %Gpp{
          section_ids: [2, 6],
          sections: [
-           %Gpp.Sections.Tcf{section_id: 2, vendor_consents: [], version: 2},
+           %Gpp.Sections.Tcf{
+             section_id: 2,
+             vendor_consents: [],
+             version: 2,
+             value: "CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"
+           },
            %Gpp.Sections.Uspv1{
              section_id: 6,
              lspa_covered_transaction: false,
@@ -29,7 +41,12 @@ defmodule GppTest do
         %Gpp{
           section_ids: [5, 6],
           sections: [
-            %Gpp.Sections.Tcf{section_id: 5, vendor_consents: [], version: 2},
+            %Gpp.Sections.Tcf{
+              section_id: 5,
+              vendor_consents: [],
+              version: 2,
+              value: "CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"
+            },
             %Gpp.Sections.Uspv1{
               section_id: 6,
               lspa_covered_transaction: false,
