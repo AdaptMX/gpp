@@ -118,4 +118,16 @@ defmodule GppTest do
       Gpp.section_name_to_id!("wat")
     end)
   end
+
+  test "header contains invalid fibonacci range" do
+    input =
+      "DBACOe~CPpE-EAPpE-EAEXbkAENDNCwAP_AAH_AACiQGMwAgF5gMZAvOACAvMAA~CPpE-EAPpE-EAEXbkAENDNCgAf-AAP-AAAYzACAXmAxkC84AIC8w~1-N-"
+
+    assert {:ok, gpp} = Gpp.parse(input)
+  end
+
+  test "invalid uspv1, skips parsing and returns struct with the value we got" do
+    input = "DBABzw~~BVQqAAAAAgA"
+    assert {:ok, %{sections: [%Gpp.Sections.Uspv1{value: ""} | _]}} = Gpp.parse(input)
+  end
 end

@@ -26,7 +26,7 @@ defmodule Gpp.Sections.Uspv1 do
   end
 
   @impl Gpp.Section
-  def parse(input) do
+  def parse(input) when byte_size(input) == 4 do
     with {:ok, version, rest} <- version(input),
          {:ok, opt_out_notice, rest} <- parse_field(rest),
          {:ok, sale_opt_out, rest} <- parse_field(rest),
@@ -42,10 +42,10 @@ defmodule Gpp.Sections.Uspv1 do
     end
   end
 
-  defp version(<<"1", rest::binary>>), do: {:ok, 1, rest}
+  def parse(value), do: {:ok, %__MODULE__{value: value}}
 
-  defp version(<<other::binary-size(1), _::binary>>),
-    do: {:error, %InvalidVersion{message: "got #{other}"}}
+  defp version(<<"1", rest::binary>>), do: {:ok, 1, rest}
+  defp version(other), do: {:error, %InvalidVersion{message: "got #{inspect(other)}"}}
 
   defp parse_field(<<value::binary-size(1), rest::binary>>) do
     with {:ok, value} <- cast_field(value) do

@@ -148,34 +148,38 @@ defmodule Gpp do
   end
 
   defp decode_fibonacci_range(count, [0 | input], acc) do
-    {offset, rest} = decode_fibonacci_word(input)
-    entry = acc.max + offset
-    id_range = %IdRange{start_id: entry, end_id: entry}
-    acc = %{acc | max: max(entry, acc.max), range: [id_range | acc.range]}
-    decode_fibonacci_range(count - 1, rest, acc)
+    with {:ok, {offset, rest}} <- decode_fibonacci_word(input) do
+      entry = acc.max + offset
+      id_range = %IdRange{start_id: entry, end_id: entry}
+      acc = %{acc | max: max(entry, acc.max), range: [id_range | acc.range]}
+      decode_fibonacci_range(count - 1, rest, acc)
+    end
   end
 
   defp decode_fibonacci_range(count, [1 | input], acc) do
-    {offset, rest} = decode_fibonacci_word(input)
-    {second_offset, rest} = decode_fibonacci_word(rest)
-    start_id = acc.max + offset
-    end_id = start_id + second_offset
-    id_range = %IdRange{start_id: start_id, end_id: end_id}
-    acc = %{acc | max: max(end_id, acc.max), range: [id_range | acc.range]}
-    decode_fibonacci_range(count - 1, rest, acc)
+    with {:ok, {offset, rest}} <- decode_fibonacci_word(input),
+         {:ok, {second_offset, rest}} <- decode_fibonacci_word(rest) do
+      start_id = acc.max + offset
+      end_id = start_id + second_offset
+      id_range = %IdRange{start_id: start_id, end_id: end_id}
+      acc = %{acc | max: max(end_id, acc.max), range: [id_range | acc.range]}
+      decode_fibonacci_range(count - 1, rest, acc)
+    end
   end
 
   defp decode_fibonacci_word(input, acc \\ [])
-  defp decode_fibonacci_word([], acc), do: {:ok, Enum.reverse(acc)}
+
+  defp decode_fibonacci_word([], acc) do
+    {:error, %InvalidSectionRange{message: "got #{inspect(Enum.reverse(acc))}"}}
+  end
 
   # fibonacci code words are variable length, but always end in 1,1
   defp decode_fibonacci_word([1, 1 | rest], acc) do
-    next =
-      [1, 1 | acc]
-      |> Enum.reverse()
-      |> FibonacciDecoder.decode!()
+    full_word = Enum.reverse([1, 1 | acc])
 
-    {next, rest}
+    with {:ok, next} <- FibonacciDecoder.decode(full_word) do
+      {:ok, {next, rest}}
+    end
   end
 
   defp decode_fibonacci_word([next | rest], acc), do: decode_fibonacci_word(rest, [next | acc])
