@@ -21,17 +21,15 @@ defmodule Gpp.FibonacciDecoderTest do
     ]
 
     for {expected, input} <- examples do
-      assert expected == FibonacciDecoder.decode!(input)
+      assert {:ok, expected} == FibonacciDecoder.decode(input)
     end
   end
 
-  test "raises exception when unexpected value encountered" do
-    assert_raise FibonacciDecoder.InvalidInputError, fn ->
-      FibonacciDecoder.decode!([0, 1, 0, 1, 9, 9, 9])
-    end
+  test "returns exception when unexpected value encountered" do
+    assert {:error, %FibonacciDecoder.InvalidInputError{}} =
+             FibonacciDecoder.decode([0, 1, 0, 1, 9, 9, 9])
 
-    assert_raise FibonacciDecoder.InvalidInputError, fn ->
-      FibonacciDecoder.decode!([0, 1, 0, 1, 2])
-    end
+    assert {:error, %FibonacciDecoder.InvalidInputError{}} =
+             FibonacciDecoder.decode([0, 1, 0, 1, 2])
   end
 end

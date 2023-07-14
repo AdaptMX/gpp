@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+
+env:
+  MIX_ENV: test
+
 jobs:
   mix_test:
     strategy:
@@ -37,7 +41,7 @@ jobs:
           elixir-version: ${{matrix.pair.elixir}}
 
       - name: Install Dependencies
-        run: mix deps.get
+        run: mix deps.get --only test
 
       - run: mix format --check-formatted
         if: ${{ matrix.lint }}

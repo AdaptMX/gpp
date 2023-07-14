@@ -11,30 +11,26 @@ defmodule Gpp.FibonacciDecoder do
   end
 
   @doc """
-      iex> Gpp.FibonacciDecoder.decode!([1, 0, 0, 0, 0, 1, 1])
-      14
+      iex> Gpp.FibonacciDecoder.decode([1, 0, 0, 0, 0, 1, 1])
+      {:ok, 14}
   """
-  def decode!(input), do: decode!(input, 3, 0)
+  def decode(input), do: decode(input, 3, 0)
 
-  defp decode!([1], _n, acc), do: acc
+  defp decode([1], _n, acc), do: {:ok, acc}
 
-  defp decode!([invalid], _n, _acc) do
-    raise InvalidInputError, message: "unexpected value: #{invalid}"
+  defp decode([invalid], _n, _acc) do
+    {:error, %InvalidInputError{message: "unexpected value: #{inspect(invalid)}"}}
   end
 
-  defp decode!([next | rest], n, acc) do
-    acc =
-      cond do
-        next == 1 ->
-          acc + Fibonacci.calc(n)
+  defp decode([1 | rest], n, acc) do
+    decode(rest, n + 1, acc + Fibonacci.calc(n))
+  end
 
-        next == 0 ->
-          acc
+  defp decode([0 | rest], n, acc) do
+    decode(rest, n + 1, acc)
+  end
 
-        true ->
-          raise InvalidInputError, message: "unexpected value: #{next}"
-      end
-
-    decode!(rest, n + 1, acc)
+  defp decode([invalid | _], _, _) do
+    {:error, %InvalidInputError{message: "unexpected value: #{inspect(invalid)}"}}
   end
 end
