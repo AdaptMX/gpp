@@ -123,7 +123,7 @@ defmodule GppTest do
     input =
       "DBACOe~CPpE-EAPpE-EAEXbkAENDNCwAP_AAH_AACiQGMwAgF5gMZAvOACAvMAA~CPpE-EAPpE-EAEXbkAENDNCgAf-AAP-AAAYzACAXmAxkC84AIC8w~1-N-"
 
-    assert {:ok, gpp} = Gpp.parse(input)
+    assert {:error, %Gpp.InvalidSectionRange{message: "got [0, 0, 1]"}} = Gpp.parse(input)
   end
 
   test "invalid uspv1, skips parsing and returns struct with the value we got" do
