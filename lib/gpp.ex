@@ -120,8 +120,11 @@ defmodule Gpp do
       {:ok, type, rest} when type == 3 ->
         {:ok, type, rest}
 
-      other ->
-        {:error, %InvalidType{message: "must equal 3, got #{other}"}}
+      {:ok, type, _} ->
+        {:error, %InvalidType{message: "must equal 3, got #{inspect(type)}"}}
+
+      _ ->
+        {:error, %InvalidHeader{message: "got #{inspect(input)}"}}
     end
   end
 

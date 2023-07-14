@@ -130,4 +130,9 @@ defmodule GppTest do
     input = "DBABzw~~BVQqAAAAAgA"
     assert {:ok, %{sections: [%Gpp.Sections.Uspv1{value: ""} | _]}} = Gpp.parse(input)
   end
+
+  test "lowercase empty header" do
+    input = "dbaa"
+    assert {:error, %Gpp.InvalidType{}} = Gpp.parse(input)
+  end
 end
