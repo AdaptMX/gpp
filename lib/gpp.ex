@@ -73,6 +73,9 @@ defmodule Gpp do
          {:ok, header_bits} <- BitUtil.url_base64_to_bits(header),
          {:ok, gpp, section_range} <- parse_header(header_bits) do
       parse_sections(gpp, section_range, sections)
+    else
+      {:error, _error} = error ->
+        error
     end
   end
 
@@ -194,16 +197,29 @@ defmodule Gpp do
       end)
 
     sections =
-      Enum.zip_with(input, section_ids, fn value, id ->
-        with {:ok, parser} <- parser(id),
-             {:ok, parsed} <- parser.(value) do
-          %{parsed | section_id: id}
-        else
-          {:error, error} -> error
+      Enum.zip_reduce(input, section_ids, [], fn value, id, acc ->
+        case acc do
+          {:error, _reason} = error ->
+            error
+
+          _ ->
+            with {:ok, parser} <- parser(id),
+                 {:ok, parsed} <- parser.(value) do
+              [%{parsed | section_id: id} | acc]
+            else
+              {:error, _error} = error ->
+                error
+            end
         end
       end)
 
-    {:ok, section_ids, sections}
+    case sections do
+      {:error, _reason} = error ->
+        error
+
+      sections ->
+        {:ok, section_ids, Enum.reverse(sections)}
+    end
   end
 
   for {id, {_, fun}} when is_function(fun) <- @sections do

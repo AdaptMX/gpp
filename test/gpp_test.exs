@@ -135,4 +135,9 @@ defmodule GppTest do
     input = "dbaa"
     assert {:error, %Gpp.InvalidType{}} = Gpp.parse(input)
   end
+
+  test "should handle error gracefully in parse/1" do
+    input = "DBABDA~"
+    assert {:error, _reason} = Gpp.parse(input)
+  end
 end
