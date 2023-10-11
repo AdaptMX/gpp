@@ -137,7 +137,14 @@ defmodule GppTest do
   end
 
   test "should handle error gracefully in parse/1" do
-    input = "DBABDA~"
-    assert {:error, _reason} = Gpp.parse(input)
+    inputs = [
+      "DBABjw~CPzHq4APzHq4ABEACBENAuCMAP-AAP-AAAmDAkAAUADQAJYAXQAzACCAEUAMoAaYA54CSgJMAT8AzQBnQDPgGvASoAn8BbwC4QF7gL_AYOAzABo4DagG4gONAeIA-QCAgEbgI_gSlAlUBMEEwYEgACgAaABLAC6AGYAQQAigBlADTAHPASUBJgCfgGaAM6AZ8A14CVAE_gLeAXCAvcBf4DBwGYANHAbUA3EBxoDxAHyAQEAjcBH8CUoEqgJggA.YAAAAAAAAAA~1---",
+      "DBABDA~",
+      "DBABDA~0"
+    ]
+
+    Enum.each(inputs, fn input ->
+      assert {:error, _reason} = Gpp.parse(input)
+    end)
   end
 end

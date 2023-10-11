@@ -24,7 +24,7 @@
 # uspca            380.75 K        2.63 μs   ±576.13%        2.21 μs        4.25 μs
 # tcf & uspv1       36.89 K       27.11 μs    ±19.34%       25.26 μs       37.67 μs
 #
-# Comparison: 
+# Comparison:
 # header          1003.31 K
 # uspca            380.75 K - 2.64x slower +1.63 μs
 # tcf & uspv1       36.89 K - 27.20x slower +26.11 μs
@@ -35,11 +35,15 @@ tcf_uspv1 =
 header = "DBACNYA"
 uspca = "DBABBgA~xlgWEYCZAA"
 
+broken_input =
+  "DBABjw~CPzHq4APzHq4ABEACBENAuCMAP-AAP-AAAmDAkAAUADQAJYAXQAzACCAEUAMoAaYA54CSgJMAT8AzQBnQDPgGvASoAn8BbwC4QF7gL_AYOAzABo4DagG4gONAeIA-QCAgEbgI_gSlAlUBMEEwYEgACgAaABLAC6AGYAQQAigBlADTAHPASUBJgCfgGaAM6AZ8A14CVAE_gLeAXCAvcBf4DBwGYANHAbUA3EBxoDxAHyAQEAjcBH8CUoEqgJggA.YAAAAAAAAAA~1---"
+
 Benchee.run(
   %{
     "header" => fn -> Gpp.parse(header) end,
     "tcf & uspv1" => fn -> Gpp.parse(tcf_uspv1) end,
-    "uspca" => fn -> Gpp.parse(uspca) end
+    "uspca" => fn -> Gpp.parse(uspca) end,
+    "broken input" => fn -> Gpp.parse(broken_input) end
   }
   # parallel: System.schedulers_online()
 )

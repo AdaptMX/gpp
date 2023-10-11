@@ -193,27 +193,23 @@ defmodule Gpp do
         for i <- start_id..end_id, do: i
       end)
 
-    sections =
-      Enum.zip_reduce(input, section_ids, [], fn value, id, acc ->
-        case acc do
-          {:error, _reason} = error ->
-            error
+    input_with_ids = Enum.zip(input, section_ids)
 
-          _ ->
-            with {:ok, parser} <- parser(id),
-                 {:ok, parsed} <- parser.(value) do
-              [%{parsed | section_id: id} | acc]
-            end
-        end
-      end)
-
-    case sections do
-      {:error, _reason} = error ->
-        error
-
-      sections ->
-        {:ok, section_ids, Enum.reverse(sections)}
+    with {:ok, sections} <- parse_sections(input_with_ids) do
+      {:ok, section_ids, Enum.reverse(sections)}
     end
+  end
+
+  defp parse_sections(input_with_ids) do
+    Enum.reduce_while(input_with_ids, {:ok, []}, fn {value, id}, {:ok, acc} ->
+      with {:ok, parser} <- parser(id),
+           {:ok, parsed} <- parser.(value) do
+        {:cont, {:ok, [%{parsed | section_id: id} | acc]}}
+      else
+        e ->
+          {:halt, e}
+      end
+    end)
   end
 
   for {id, {_, fun}} when is_function(fun) <- @sections do
