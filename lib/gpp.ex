@@ -73,9 +73,6 @@ defmodule Gpp do
          {:ok, header_bits} <- BitUtil.url_base64_to_bits(header),
          {:ok, gpp, section_range} <- parse_header(header_bits) do
       parse_sections(gpp, section_range, sections)
-    else
-      {:error, _error} = error ->
-        error
     end
   end
 
@@ -206,9 +203,6 @@ defmodule Gpp do
             with {:ok, parser} <- parser(id),
                  {:ok, parsed} <- parser.(value) do
               [%{parsed | section_id: id} | acc]
-            else
-              {:error, _error} = error ->
-                error
             end
         end
       end)
