@@ -14,7 +14,7 @@ The package can be installed by adding `gpp` to your list of dependencies in `mi
 ```elixir
 def deps do
   [
-    {:gpp, "~> 0.1.0"}
+    {:gpp, "~> 0.1"}
   ]
 end
 ```
