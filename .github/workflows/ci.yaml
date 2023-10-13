@@ -18,11 +18,11 @@ jobs:
               elixir: "1.12"
               otp: "23.x"
           - pair:
-              elixir: "1.15.2"
+              elixir: "1.15.4"
               otp: "26.x"
             lint: lint
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
