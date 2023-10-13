@@ -26,6 +26,9 @@ defmodule Gpp.Sections.Tcf.VendorList do
       _, {:ok, entries, [0 | rest]} ->
         {:cont, {:ok, entries, rest}}
 
+      _, {:ok, entries, []} ->
+        {:cont, {:ok, entries, []}}
+
       _, _ ->
         {:halt, invalid_input_error()}
     end)

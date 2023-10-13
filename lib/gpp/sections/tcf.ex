@@ -1,6 +1,6 @@
 defmodule Gpp.Sections.Tcf do
   @moduledoc """
-  IAB Transparency and Consent Framework v1.1 & v2.0 String Decoding.
+  EU IAB Transparency and Consent Framework v1.1 & v2.0 String Decoding.
 
   Only decodes the "version" and the "vendor consents" parts of the "core" segment.
   """
@@ -27,7 +27,7 @@ defmodule Gpp.Sections.Tcf do
       case version do
         2 -> Tcfv2.Segment.decode(input, type, rest)
         1 -> Tcfv1.Segment.decode(input, type, rest)
-        other -> {:error, %DecodeError{message: "unknown TCF version: #{other}"}}
+        other -> {:error, %DecodeError{message: "unknown TCF EU version: #{other}"}}
       end
     end
   end
@@ -48,12 +48,12 @@ defmodule Gpp.Sections.Tcf do
     vendor_id in consents
   end
 
-  defp segment_type(bits) do
+  def segment_type(bits) do
     with {:ok, type_int, rest} <- BitUtil.parse_3bit_int(bits),
          {:ok, type} <- __MODULE__.SegmentId.to_name(type_int) do
       {:ok, type, rest}
     end
   end
 
-  defp version(input), do: BitUtil.parse_6bit_int(input)
+  def version(input), do: BitUtil.parse_6bit_int(input)
 end
