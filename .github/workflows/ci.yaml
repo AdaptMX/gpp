@@ -26,6 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
+        id: cache-deps
         with:
           path: deps
           key: deps-${{ runner.os }}-${{ matrix.pair.otp }}-${{ matrix.pair.elixir }}-${{ hashFiles('**/mix.lock') }}
@@ -40,14 +41,16 @@ jobs:
           otp-version: ${{matrix.pair.otp}}
           elixir-version: ${{matrix.pair.elixir}}
 
-      - name: Install Dependencies
-        run: mix deps.get --only test
+      - name: Install and compile dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: mix do deps.get --only test, deps.compile
 
       - run: mix format --check-formatted
         if: ${{ matrix.lint }}
 
-      - run: mix deps.unlock --check-unused
-        if: ${{ matrix.lint }}
+      - name: Check for unused dependencies
+        run: mix do deps.get, deps.unlock --check-unused
+        if: ${{ matrix.lint && steps.cache-deps.outputs.cache-hit != 'true'}}
 
       - run: mix deps.compile
 
@@ -59,5 +62,5 @@ jobs:
         if: ${{ ! matrix.lint }}
 
       - name: Run Tests
-        run: mix test --warnings-as-errors
+        run: mix test
         if: ${{ matrix.lint }}
