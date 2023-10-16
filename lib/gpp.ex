@@ -55,7 +55,7 @@ defmodule Gpp do
   @sections %{
     2 => {"tcfeu2", &Sections.Tcf.parse/1},
     3 => {"gpp header", nil},
-    5 => {"tcfcav1", &Sections.Tcf.parse/1},
+    5 => {"tcfcav1", &Sections.Tcfcav1.parse/1},
     6 => {"uspv1", &Sections.Uspv1.parse/1},
     7 => {"uspnat", &Sections.Uspnat.parse/1},
     8 => {"uspca", &Sections.Uspca.parse/1},
@@ -193,17 +193,23 @@ defmodule Gpp do
         for i <- start_id..end_id, do: i
       end)
 
-    sections =
-      Enum.zip_with(input, section_ids, fn value, id ->
-        with {:ok, parser} <- parser(id),
-             {:ok, parsed} <- parser.(value) do
-          %{parsed | section_id: id}
-        else
-          {:error, error} -> error
-        end
-      end)
+    input_with_ids = Enum.zip(input, section_ids)
 
-    {:ok, section_ids, sections}
+    with {:ok, sections} <- parse_sections(input_with_ids) do
+      {:ok, section_ids, Enum.reverse(sections)}
+    end
+  end
+
+  defp parse_sections(input_with_ids) do
+    Enum.reduce_while(input_with_ids, {:ok, []}, fn {value, id}, {:ok, acc} ->
+      with {:ok, parser} <- parser(id),
+           {:ok, parsed} <- parser.(value) do
+        {:cont, {:ok, [%{parsed | section_id: id} | acc]}}
+      else
+        e ->
+          {:halt, e}
+      end
+    end)
   end
 
   for {id, {_, fun}} when is_function(fun) <- @sections do

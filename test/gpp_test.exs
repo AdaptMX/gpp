@@ -82,6 +82,65 @@ defmodule GppTest do
              usgpc: nil
            }
          ]
+       }},
+      {"DBABjw~CPzHq4APzHq4ABEACBENAuCMAP-AAP-AAAmDAkAAUADQAJYAXQAzACCAEUAMoAaYA54CSgJMAT8AzQBnQDPgGvASoAn8BbwC4QF7gL_AYOAzABo4DagG4gONAeIA-QCAgEbgI_gSlAlUBMEEwYEgACgAaABLAC6AGYAQQAigBlADTAHPASUBJgCfgGaAM6AZ8A14CVAE_gLeAXCAvcBf4DBwGYANHAbUA3EBxoDxAHyAQEAjcBH8CUoEqgJggA.YAAAAAAAAAA~1---",
+       %Gpp{
+         section_ids: [5, 6],
+         sections: [
+           %Gpp.Sections.Tcf{
+             section_id: 5,
+             version: 2,
+             vendor_consents: [
+               1217,
+               1194,
+               1189,
+               1151,
+               1134,
+               1028,
+               996,
+               964,
+               909,
+               881,
+               874,
+               839,
+               816,
+               775,
+               767,
+               759,
+               737,
+               734,
+               639,
+               596,
+               431,
+               415,
+               413,
+               410,
+               319,
+               294,
+               293,
+               231,
+               211,
+               202,
+               138,
+               130,
+               102,
+               93,
+               75,
+               52,
+               10
+             ],
+             value:
+               "CPzHq4APzHq4ABEACBENAuCMAP-AAP-AAAmDAkAAUADQAJYAXQAzACCAEUAMoAaYA54CSgJMAT8AzQBnQDPgGvASoAn8BbwC4QF7gL_AYOAzABo4DagG4gONAeIA-QCAgEbgI_gSlAlUBMEEwYEgACgAaABLAC6AGYAQQAigBlADTAHPASUBJgCfgGaAM6AZ8A14CVAE_gLeAXCAvcBf4DBwGYANHAbUA3EBxoDxAHyAQEAjcBH8CUoEqgJggA.YAAAAAAAAAA"
+           },
+           %Gpp.Sections.Uspv1{
+             value: "1---",
+             opt_out_notice: nil,
+             sale_opt_out: nil,
+             lspa_covered_transaction: nil,
+             section_id: 6,
+             version: 1
+           }
+         ]
        }}
     ]
 
@@ -90,11 +149,12 @@ defmodule GppTest do
     end
   end
 
-  test "invalid header" do
-    assert {:error, %Gpp.InvalidHeader{message: msg}} =
-             Gpp.parse("gA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA")
+  test "invalid headers" do
+    headers = ["DBABDA~", "DBABDA~0", "gA~CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"]
 
-    assert "header must be atleast 3 bytes long, got: \"gA\"" == msg
+    for header <- headers do
+      assert {:error, _} = Gpp.parse(header)
+    end
   end
 
   test "completely invalid input" do
