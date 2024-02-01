@@ -3,7 +3,7 @@ defmodule Gpp.Sections.Tcf.Segment do
   alias Gpp.Sections.Tcf.VendorList
 
   @doc """
-  Decodes the fields of a TCF segment. Currently only returns for cmp_id and vendor_consents.
+  Decodes the fields of a TCF segment. Currently returns cmp_id and vendor_consents
   """
   def decode_fields(segment, first_skip_bits, second_skip_bits) do
     with {:ok, cmp_id, second_input} <-
