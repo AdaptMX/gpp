@@ -2,9 +2,10 @@ defmodule Gpp.Sections.Tcfv2.Segment do
   @moduledoc false
   alias Gpp.Sections.Tcf
   alias Gpp.Sections.Tcf.{VendorList, DecodeError}
+  alias Gpp.BitUtil
 
   # Full field list with lengths.
-  # We are only interested in vendor_consents, so we skip straight to that field.
+  # We are only interested in cmp_id & vendor_consents, so we skip the rest of the fields.
   #
   # :created, 36
   # :last_updated, 36
@@ -24,13 +25,16 @@ defmodule Gpp.Sections.Tcfv2.Segment do
   # :vendor_consents, 16
   # :vendor_legitimate_interests, 12
   # :publisher_restrictions
-  @skip_bits 36 + 36 + 12 + 12 + 6 + 12 + 12 + 6 + 1 + 1 + 12 + 24 + 24 + 1 + 12
+  @first_skip_bits 36 + 36
+  @second_skip_bits 12 + 6 + 12 + 12 + 6 + 1 + 1 + 12 + 24 + 24 + 1 + 12
 
   def decode(full_string, :core, segment) do
-    input = Enum.drop(segment, @skip_bits)
+    input = Enum.drop(segment, @first_skip_bits)
+    {:ok, cmp_id, second_input} = BitUtil.parse_12bit_int(input)
+    vendor_list = Enum.drop(second_input, @second_skip_bits)
 
-    with {:ok, consents, _rest} <- VendorList.decode(input) do
-      {:ok, %Tcf{version: 2, value: full_string, vendor_consents: consents}}
+    with {:ok, consents, _rest} <- VendorList.decode(vendor_list) do
+      {:ok, %Tcf{version: 2, value: full_string, vendor_consents: consents, cmp_id: cmp_id}}
     end
   end
 
