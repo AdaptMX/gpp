@@ -4,7 +4,7 @@ defmodule Gpp.Sections.Tcfv1.Segment do
   alias Gpp.Sections.Tcf.{Segment, DecodeError}
 
   # Full field list with lengths.
-  # We are only interested in vendor_consents, so we skip straight to that field.
+  # We are only interested in cmp_id & vendor_consents, so we skip the rest of the fields
   #
   # :created, 36
   # :last_updated, 36
