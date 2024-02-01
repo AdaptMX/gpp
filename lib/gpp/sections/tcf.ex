@@ -15,7 +15,8 @@ defmodule Gpp.Sections.Tcf do
     :section_id,
     :version,
     :vendor_consents,
-    :value
+    :value,
+    :cmp_id
   ]
 
   @impl Gpp.Section

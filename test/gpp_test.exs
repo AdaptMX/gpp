@@ -12,6 +12,7 @@ defmodule GppTest do
              section_id: 2,
              vendor_consents: [],
              version: 2,
+             cmp_id: 31,
              value: "CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"
            }
          ]
@@ -24,6 +25,7 @@ defmodule GppTest do
              section_id: 2,
              vendor_consents: [],
              version: 2,
+             cmp_id: 31,
              value: "CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"
            },
            %Gpp.Sections.Uspv1{
@@ -45,6 +47,7 @@ defmodule GppTest do
               section_id: 5,
               vendor_consents: [],
               version: 2,
+              cmp_id: 31,
               value: "CPXxRfAPXxRfAAfKABENB-CgAAAAAAAAAAYgAAAAAAAA"
             },
             %Gpp.Sections.Uspv1{
@@ -90,6 +93,7 @@ defmodule GppTest do
            %Gpp.Sections.Tcf{
              section_id: 5,
              version: 2,
+             cmp_id: 68,
              vendor_consents: [
                1217,
                1194,
