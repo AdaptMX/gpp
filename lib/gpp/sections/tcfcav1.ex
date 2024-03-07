@@ -18,7 +18,7 @@ defmodule Gpp.Sections.Tcfcav1 do
          {:ok, type, _rest} <- Tcf.segment_type(bits),
          {:ok, version, rest} <- Tcf.version(bits) do
       case version do
-        2 -> __MODULE__.Segment.decode(input, type, rest)
+        1 -> __MODULE__.Segment.decode(input, type, rest)
         other -> {:error, %Tcf.DecodeError{message: "unknown TCF CA version: #{other}"}}
       end
     end
