@@ -16,11 +16,9 @@ defmodule Gpp.Sections.Tcfcav1 do
     with [core_segment | _] <- String.split(input, ".", parts: 2),
          {:ok, bits} <- BitUtil.url_base64_to_bits(core_segment),
          {:ok, type, _rest} <- Tcf.segment_type(bits),
-         {:ok, version, rest} <- Tcf.version(bits) do
-      case version do
-        1 -> __MODULE__.Segment.decode(input, type, rest)
-        other -> {:error, %Tcf.DecodeError{message: "unknown TCF CA version: #{other}"}}
-      end
+         {:ok, version, rest} <- Tcf.version(bits),
+         {:ok, parsed} <- __MODULE__.Segment.decode(input, type, rest) do
+      {:ok, %{parsed | version: version}}
     end
   end
 end
