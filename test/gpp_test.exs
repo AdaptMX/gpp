@@ -145,7 +145,24 @@ defmodule GppTest do
              version: 1
            }
          ]
-       }}
+       }},
+      {
+        "DBABDA~BP6vdoAP6vdoAPoABABGBECAAAAAAAAAAAXDABAXCAAAAAA.YAAAAAAAAAA",
+        %Gpp{
+          section_ids: [5],
+          sections: [
+            %Gpp.Sections.Tcf{
+              section_id: 5,
+              version: 1,
+              vendor_consents: [737],
+              value: "BP6vdoAP6vdoAPoABABGBECAAAAAAAAAAAXDABAXCAAAAAA.YAAAAAAAAAA",
+              cmp_id: 1000
+            }
+          ],
+          type: 3,
+          version: 1
+        }
+      }
     ]
 
     for {input, expected} <- examples do
