@@ -27,7 +27,7 @@ defmodule Gpp.Sections.Tcfcav1.Segment do
   def decode(full_string, :core, segment) do
     with {:ok, cmp_id, consents} <-
            Segment.decode_fields(segment, @first_skip_bits, @second_skip_bits) do
-      {:ok, %Tcf{version: 2, value: full_string, vendor_consents: consents, cmp_id: cmp_id}}
+      {:ok, %Tcf{version: 1, value: full_string, vendor_consents: consents, cmp_id: cmp_id}}
     end
   end
 

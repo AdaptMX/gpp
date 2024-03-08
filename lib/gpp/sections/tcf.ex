@@ -28,7 +28,7 @@ defmodule Gpp.Sections.Tcf do
       case version do
         2 -> Tcfv2.Segment.decode(input, type, rest)
         1 -> Tcfv1.Segment.decode(input, type, rest)
-        other -> {:error, %DecodeError{message: "unknown TCF EU version: #{other}"}}
+        other -> {:error, %DecodeError{message: "unknown TCF version: #{other}"}}
       end
     end
   end
